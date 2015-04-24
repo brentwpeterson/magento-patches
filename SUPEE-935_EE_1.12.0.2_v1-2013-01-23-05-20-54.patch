@@ -1,0 +1,159 @@
+diff --git app/code/core/Mage/Usa/Helper/Data.php app/code/core/Mage/Usa/Helper/Data.php
+index 175fb81..afe72f3 100644
+--- app/code/core/Mage/Usa/Helper/Data.php
++++ app/code/core/Mage/Usa/Helper/Data.php
+@@ -119,14 +119,16 @@ class Mage_Usa_Helper_Data extends Mage_Core_Helper_Abstract
+             'usps_Express Mail Hold For Pickup',
+             'usps_Express Mail International',
+             'usps_First-Class Mail International Package',
+-            'usps_First-Class Mail International Parcel',
++            'usps_First-Class Mail International Parcel', // deprecated
++            'usps_First-Class Package International Service',
+             'usps_First-Class Mail International Large Envelope',
+             'usps_First-Class Mail International',
+             'usps_Global Express Guaranteed (GXG)',
+             'usps_USPS GXG Envelopes',
+             'usps_Global Express Guaranteed Non-Document Non-Rectangular',
+             'usps_Media Mail',
+-            'usps_Parcel Post',
++            'usps_Parcel Post', // deprecated
++            'usps_Standard Post',
+             'usps_Express Mail',
+             'usps_Priority Mail'
+         ))) {
+diff --git app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
+index 62173e8..dff8046 100644
+--- app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
++++ app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
+@@ -553,7 +553,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                 'PRIORITY'    => Mage::helper('usa')->__('Priority Mail'),
+                 'EXPRESS'     => Mage::helper('usa')->__('Express Mail'),
+                 'BPM'         => Mage::helper('usa')->__('Bound Printed Matter'),
+-                'PARCEL'      => Mage::helper('usa')->__('Parcel Post'),
++                'PARCEL'      => Mage::helper('usa')->__('Parcel Post'), // deprecated
++                'STANDARD'    => Mage::helper('usa')->__('Standard Post'),
+                 'MEDIA'       => Mage::helper('usa')->__('Media Mail'),
+                 'LIBRARY'     => Mage::helper('usa')->__('Library'),
+             ),
+@@ -563,7 +564,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                 'First-Class Mail International Large Envelope' => 'FIRST CLASS',
+                 'First-Class Mail International Letter'         => 'FIRST CLASS',
+                 'First-Class Mail International Package'        => 'FIRST CLASS',
+-                'First-Class Mail International Parcel'         => 'FIRST CLASS',
++                'First-Class Mail International Parcel'         => 'FIRST CLASS', // deprecated
++                'First-Class Package International Service'     => 'FIRST CLASS',
+                 'First-Class Mail'                 => 'FIRST CLASS',
+                 'First-Class Mail Flat'            => 'FIRST CLASS',
+                 'First-Class Mail Large Envelope'  => 'FIRST CLASS',
+@@ -571,7 +573,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                 'First-Class Mail Letter'          => 'FIRST CLASS',
+                 'First-Class Mail Parcel'          => 'FIRST CLASS',
+                 'First-Class Mail Package'         => 'FIRST CLASS',
+-                'Parcel Post'                      => 'PARCEL',
++                'Parcel Post'                      => 'PARCEL', // deprecated
++                'Standard Post'                    => 'STANDARD',
+                 'Bound Printed Matter'             => 'BPM',
+                 'Media Mail'                       => 'MEDIA',
+                 'Library Mail'                     => 'LIBRARY',
+@@ -630,7 +633,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                                 'Priority Mail Small Flat Rate Box',
+                                 'Express Mail',
+                                 'Priority Mail',
+-                                'Parcel Post',
++                                'Parcel Post', // deprecated
++                                'Standard Post',
+                                 'Media Mail',
+                                 'First-Class Mail Large Envelope',
+                             )
+@@ -648,7 +652,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                                 'Priority Mail International',
+                                 'First-Class Mail International Package',
+                                 'First-Class Mail International Large Envelope',
+-                                'First-Class Mail International Parcel',
++                                'First-Class Mail International Parcel', // deprecated
++                                'First-Class Package International Service',
+                             )
+                         )
+                     )
+@@ -697,7 +702,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                             'method' => array(
+                                 'Express Mail',
+                                 'Priority Mail',
+-                                'Parcel Post',
++                                'Parcel Post', // deprecated
++                                'Standard Post',
+                                 'Media Mail',
+                             )
+                         ),
+@@ -707,7 +713,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                                 'Express Mail International',
+                                 'Priority Mail International',
+                                 'First-Class Mail International Package',
+-                                'First-Class Mail International Parcel',
++                                'First-Class Mail International Parcel', // deprecated
++                                'First-Class Package International Service',
+                             )
+                         )
+                     )
+@@ -719,7 +726,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                             'method' => array(
+                                 'Express Mail',
+                                 'Priority Mail',
+-                                'Parcel Post',
++                                'Parcel Post', // deprecated
++                                'Standard Post',
+                                 'Media Mail',
+                             )
+                         ),
+@@ -730,7 +738,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                                 'Express Mail International',
+                                 'Priority Mail International',
+                                 'First-Class Mail International Package',
+-                                'First-Class Mail International Parcel',
++                                'First-Class Mail International Parcel', // deprecated
++                                'First-Class Package International Service',
+                             )
+                         )
+                     )
+@@ -1290,9 +1299,12 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+             case 'FIRST CLASS':
+                 $serviceType = 'First Class';
+                 break;
+-            case 'PARCEL':
++            case 'PARCEL': // deprecated
+                 $serviceType = 'Parcel Post';
+                 break;
++            case 'STANDARD':
++                $serviceType = 'Standard Post';
++                break;
+             case 'MEDIA':
+                 $serviceType = 'Media Mail';
+                 break;
+diff --git app/code/core/Mage/Usa/etc/config.xml app/code/core/Mage/Usa/etc/config.xml
+index 5eaa96c..9aa4ebc 100644
+--- app/code/core/Mage/Usa/etc/config.xml
++++ app/code/core/Mage/Usa/etc/config.xml
+@@ -185,7 +185,7 @@
+             <usps>
+                 <active>0</active>
+                 <sallowspecific>0</sallowspecific>
+-                <allowed_methods>Bound Printed Matter,Express Mail,Express Mail Flat Rate Envelope,Express Mail Flat Rate Envelope Hold For Pickup,Express Mail Flat-Rate Envelope Sunday/Holiday Guarantee,Express Mail Hold For Pickup,Express Mail International,Express Mail International Flat Rate Envelope,Express Mail PO to PO,Express Mail Sunday/Holiday Guarantee,First-Class Mail International Large Envelope,First-Class Mail International Letters,First-Class Mail International Package,First-Class Mail International Parcel,First-Class,First-Class Mail,First-Class Mail Flat,First-Class Mail Large Envelope,First-Class Mail International,First-Class Mail Letter,First-Class Mail Parcel,First-Class Mail Package,Global Express Guaranteed (GXG),Global Express Guaranteed Non-Document Non-Rectangular,Global Express Guaranteed Non-Document Rectangular,Library Mail,Media Mail,Parcel Post,Priority Mail,Priority Mail Small Flat Rate Box,Priority Mail Medium Flat Rate Box,Priority Mail Large Flat Rate Box,Priority Mail Flat Rate Box,Priority Mail Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box,Priority Mail International Flat Rate Envelope,Priority Mail International Small Flat Rate Box,Priority Mail International Medium Flat Rate Box,Priority Mail International Large Flat Rate Box,USPS GXG Envelopes</allowed_methods>
++                <allowed_methods>Bound Printed Matter,Express Mail,Express Mail Flat Rate Envelope,Express Mail Flat Rate Envelope Hold For Pickup,Express Mail Flat-Rate Envelope Sunday/Holiday Guarantee,Express Mail Hold For Pickup,Express Mail International,Express Mail International Flat Rate Envelope,Express Mail PO to PO,Express Mail Sunday/Holiday Guarantee,First-Class Mail International Large Envelope,First-Class Mail International Letters,First-Class Mail International Package,First-Class Mail International Parcel,First-Class Package International Service,First-Class,First-Class Mail,First-Class Mail Flat,First-Class Mail Large Envelope,First-Class Mail International,First-Class Mail Letter,First-Class Mail Parcel,First-Class Mail Package,Global Express Guaranteed (GXG),Global Express Guaranteed Non-Document Non-Rectangular,Global Express Guaranteed Non-Document Rectangular,Library Mail,Media Mail,Parcel Post,Standard Post,Priority Mail,Priority Mail Small Flat Rate Box,Priority Mail Medium Flat Rate Box,Priority Mail Large Flat Rate Box,Priority Mail Flat Rate Box,Priority Mail Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box,Priority Mail International Flat Rate Envelope,Priority Mail International Small Flat Rate Box,Priority Mail International Medium Flat Rate Box,Priority Mail International Large Flat Rate Box,USPS GXG Envelopes</allowed_methods>
+                 <container>VARIABLE</container>
+                 <cutoff_cost/>
+                 <free_method/>
+@@ -194,7 +194,7 @@
+                 <shipment_requesttype>0</shipment_requesttype>
+                 <handling/>
+                 <machinable>true</machinable>
+-                <methods>Bound Printed Matter,Express Mail,Express Mail Flat Rate Envelope,Express Mail Flat Rate Envelope Hold For Pickup,Express Mail Flat-Rate Envelope Sunday/Holiday Guarantee,Express Mail Hold For Pickup,Express Mail International,Express Mail International Flat Rate Envelope,Express Mail PO to PO,Express Mail Sunday/Holiday Guarantee,First-Class Mail International Large Envelope,First-Class Mail International Letters,First-Class Mail International Package,First-Class Mail International Parcel,First-Class,First-Class Mail,First-Class Mail Flat,First-Class Mail Large Envelope,First-Class Mail International,First-Class Mail Letter,First-Class Mail Parcel,First-Class Mail Package,Global Express Guaranteed (GXG),Global Express Guaranteed Non-Document Non-Rectangular,Global Express Guaranteed Non-Document Rectangular,Library Mail,Media Mail,Parcel Post,Priority Mail,Priority Mail Small Flat Rate Box,Priority Mail Medium Flat Rate Box,Priority Mail Large Flat Rate Box,Priority Mail Flat Rate Box,Priority Mail Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box,Priority Mail International Flat Rate Envelope,Priority Mail International Small Flat Rate Box,Priority Mail International Medium Flat Rate Box,Priority Mail International Large Flat Rate Box,USPS GXG Envelopes</methods>
++                <methods>Bound Printed Matter,Express Mail,Express Mail Flat Rate Envelope,Express Mail Flat Rate Envelope Hold For Pickup,Express Mail Flat-Rate Envelope Sunday/Holiday Guarantee,Express Mail Hold For Pickup,Express Mail International,Express Mail International Flat Rate Envelope,Express Mail PO to PO,Express Mail Sunday/Holiday Guarantee,First-Class Mail International Large Envelope,First-Class Mail International Letters,First-Class Mail International Package,First-Class Mail International Parcel,First-Class Package International Service,First-Class,First-Class Mail,First-Class Mail Flat,First-Class Mail Large Envelope,First-Class Mail International,First-Class Mail Letter,First-Class Mail Parcel,First-Class Mail Package,Global Express Guaranteed (GXG),Global Express Guaranteed Non-Document Non-Rectangular,Global Express Guaranteed Non-Document Rectangular,Library Mail,Media Mail,Parcel Post,Standard Post,Priority Mail,Priority Mail Small Flat Rate Box,Priority Mail Medium Flat Rate Box,Priority Mail Large Flat Rate Box,Priority Mail Flat Rate Box,Priority Mail Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box,Priority Mail International Flat Rate Envelope,Priority Mail International Small Flat Rate Box,Priority Mail International Medium Flat Rate Box,Priority Mail International Large Flat Rate Box,USPS GXG Envelopes</methods>
+                 <model>usa/shipping_carrier_usps</model>
+                 <size>REGULAR</size>
+                 <title>United States Postal Service</title>
+diff --git app/etc/applied.list app/etc/applied.list
+index 0000000..dca6872 100644
+--- app/etc/applied.list
++++ app/etc/applied.list
+@@ -0,0 +1 @@
++SUPEE-935
