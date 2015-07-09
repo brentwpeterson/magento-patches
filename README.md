@@ -3,6 +3,7 @@
 The following grid was supplied by John Knowles 
 
 Twitter: @knowj 
+
 http://www.wearejh.com/development/security-our-clients-are-fully-patched-are-you/
 
 Dates          |                |  07/07/2015    |  15/05/2015    |  12/02/2015     |  12/02/2015     |  12/02/2015     |  12/02/2015     |  12/02/2015     |  03/10/2014    |  12/12/2013     |  12/12/2013     |  12/12/2013     |  12/12/2013     |  02/11/2013           
