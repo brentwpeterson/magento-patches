@@ -88,35 +88,3 @@ If you need help, let us know. Contact details at the bottom.
 * Command with options: `php -f fixSUPEE6788.php -- analyze recordAffected`
 
 All results are output to screen and to var/log/fixSUPEE6788.log.
-
-We recommend patching your site in two phases: First, apply the SUPEE-6788 patch and immediately run this script with the `fixWhitelists` flag to fix any functionality broken by the whitelist changes. (Verify that all entries added should in fact be there.) Then, run this script with `analyze` and/or `fix` to correct controller conflicts. Verify all is well, then disable the admin controller compatibility mode.
-
-After patching, scan with [MageReport.com](https://www.magereport.com/) to confirm your site is up to date.
-
-## Technical Details
-For a rundown of conflicting changes from the SUPEE-6788 patch, see the [technical details brief](http://magento.com/security/patches/supee-6788-technical-details) and discussion on [Magento StackExchange](http://magento.stackexchange.com/questions/87214/how-to-check-which-modules-are-affected-by-security-patch-supee-6788/).
-
-There are four points of interest outlined.
-
-1. **APPSEC-1034**, bypassing custom admin URL: This script addresses this by identifying any affected modules (containing `<use>admin</use>`), and outlines the exact code changes necessary to fix each one. It can apply all of those changes for you if desired.  
-2. **APPSEC-1063**, possible SQL injection: This script attempts to identify any such cases by checking all modules and templates for a specific REGEX pattern. Any instances found must be analyzed (and if needed, fixed) manually. (Thanks @timvroom) NOTE: There is no guarantee that all possible instances will be found, nor that all instances found will be affected.  
-3. **APPSEC-1057**, information exposure: The patch adds a whitelist of specific blocks and settings accessible in CMS pages, static blocks, and email templates. This script scans all affected content looking for any entries not on the whitelist. It can add all missing entries to the whitelist if desired.  
-4. **APPSEC-1079**, potential exploit with PHP opjects in product custom options: This script does not address this change. Any custom code dealing with custom options must be evaluated manually for impact.
-
-## Caveats
-* Script assumes admin controllers are all located within {module}/controllers/Adminhtml. This is convention, but not always true.
-* Script will not handle multiple admin routes in a single module.
-* The script may not catch all possible route formats. The automated changes may result in broken admin pages that must be corrected manually.
-
-## Who we are
-This script is provided as a courtesy from ParadoxLabs. We created it to help with applying our own patches, and we're sharing it so you can benefit too. We are a Magento Silver Solution Partner, based out of Lancaster, Pennsylvania USA.
-
-Contributions are welcome. If you have fixes or additional functionality you would like to add, we're happy to accept pull requests. But please realize support will be limited. This script is provided as-is, without warranty or liability. We make no guarantee as to its correctness or completeness, and by using it we assume you know what you're getting into.
-
-The TemplateVars portion of this script was adapted from magerun-addons, courtesy of @peterjaap and @timvroom. Many thanks to their groundwork. https://github.com/peterjaap/magerun-addons
-
-### [ParadoxLabs, Inc.](http://www.paradoxlabs.com)
-* **Web:** http://www.paradoxlabs.com
-* **Phone:**   [717-431-3330](tel:7174313330)
-* **Email:**   sales@paradoxlabs.com
-* **Support:** http://support.paradoxlabs.com
