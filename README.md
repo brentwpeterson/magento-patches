@@ -11,5 +11,5 @@ If you have a patch that is not in this repo please open a pull request and I wi
 Please do not open a support ticket for your Magento site. The best place to get your Magento questions answered is here http://magento.stackexchange.com/ 
 
 ##More questions?
-Please contact me through Github.
+Please contact me on twitter @brentwpeterson
 
