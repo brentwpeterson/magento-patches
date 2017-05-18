@@ -1,0 +1,187 @@
+diff --git a/vendor/magento/module-catalog/Block/Product/ImageBlockBuilder.php b/vendor/magento/module-catalog/Block/Product/ImageBlockBuilder.php
+index 9fa50c1..1e54cfc 100644
+--- a/vendor/magento/module-catalog/Block/Product/ImageBlockBuilder.php
++++ b/vendor/magento/module-catalog/Block/Product/ImageBlockBuilder.php
+@@ -120,12 +120,7 @@ class ImageBlockBuilder
+             $label = $product->getName();
+         }
+ 
+-        $frame = isset($imageArguments['frame']) ? $imageArguments ['frame'] : null;
+-        if (empty($frame)) {
+-            $frame = $this->presentationConfig->getVarValue('Magento_Catalog', 'product_image_white_borders');
+-        }
+-
+-        $template = $frame
++        $template = $image['keep_frame'] == 'frame'
+             ? 'Magento_Catalog::product/image.phtml'
+             : 'Magento_Catalog::product/image_with_borders.phtml';
+ 
+diff --git a/vendor/magento/module-catalog/Helper/Image.php b/vendor/magento/module-catalog/Helper/Image.php
+index 039c260..9a7c13e 100644
+--- a/vendor/magento/module-catalog/Helper/Image.php
++++ b/vendor/magento/module-catalog/Helper/Image.php
+@@ -826,7 +826,7 @@ class Image extends AbstractHelper
+         if ($frame === null) {
+             $frame = $this->getConfigView()->getVarValue('Magento_Catalog', 'product_image_white_borders');
+         }
+-        return (bool)$frame;
++        return $frame;
+     }
+ 
+     /**
+diff --git a/vendor/magento/module-catalog/Model/Product/Image.php b/vendor/magento/module-catalog/Model/Product/Image.php
+index c1c10da..b543571 100644
+--- a/vendor/magento/module-catalog/Model/Product/Image.php
++++ b/vendor/magento/module-catalog/Model/Product/Image.php
+@@ -320,7 +320,7 @@ class Image extends \Magento\Framework\Model\AbstractModel
+      */
+     public function setKeepAspectRatio($keep)
+     {
+-        $this->_keepAspectRatio = (bool)$keep;
++        $this->_keepAspectRatio = $keep && $keep !== 'false';
+         return $this;
+     }
+ 
+@@ -330,7 +330,7 @@ class Image extends \Magento\Framework\Model\AbstractModel
+      */
+     public function setKeepFrame($keep)
+     {
+-        $this->_keepFrame = (bool)$keep;
++        $this->_keepFrame = $keep && $keep !== 'false';
+         return $this;
+     }
+ 
+@@ -340,7 +340,7 @@ class Image extends \Magento\Framework\Model\AbstractModel
+      */
+     public function setKeepTransparency($keep)
+     {
+-        $this->_keepTransparency = (bool)$keep;
++        $this->_keepTransparency = $keep && $keep !== 'false';
+         return $this;
+     }
+ 
+@@ -350,7 +350,7 @@ class Image extends \Magento\Framework\Model\AbstractModel
+      */
+     public function setConstrainOnly($flag)
+     {
+-        $this->_constrainOnly = (bool)$flag;
++        $this->_constrainOnly = $flag && $flag !== 'false';
+         return $this;
+     }
+ 
+diff --git a/vendor/magento/module-catalog/Model/Product/Image/ParamsBuilder.php b/vendor/magento/module-catalog/Model/Product/Image/ParamsBuilder.php
+index 603f3e8..7aa0c32 100644
+--- a/vendor/magento/module-catalog/Model/Product/Image/ParamsBuilder.php
++++ b/vendor/magento/module-catalog/Model/Product/Image/ParamsBuilder.php
+@@ -70,6 +70,21 @@ class ParamsBuilder
+     }
+ 
+     /**
++     * Reads boolean value from arguments
++     *
++     * Performs correct boolean cast
++     *
++     * @param array $args
++     * @param string $key
++     * @param bool $default
++     * @return bool|null
++     */
++    private function readBoolValue(array $args, $key, $default = null)
++    {
++        return isset($args[$key]) ? $args[$key] && $args[$key] !== 'false' : $default;
++    }
++
++    /**
+      * @param array $imageArguments
+      * @return array
+      * @SuppressWarnings(PHPMD.NPathComplexity)
+@@ -82,9 +97,11 @@ class ParamsBuilder
+         $width = isset($imageArguments['width']) ? $imageArguments['width'] : null;
+         $height = isset($imageArguments['height']) ? $imageArguments['height'] : null;
+ 
+-        $frame = !empty($imageArguments['frame'])
+-            ? $imageArguments['frame']
+-            : $this->keepFrame;
++        $frame = $this->readBoolValue($imageArguments, 'frame');
++
++        if ($frame === null) {
++            $frame = $this->presentationConfig->getVarValue('Magento_Catalog', 'product_image_white_borders');
++        }
+ 
+         $constrain = !empty($imageArguments['constrain'])
+             ? $imageArguments['constrain']
+diff --git a/vendor/magento/module-catalog/etc/view.xml b/vendor/magento/module-catalog/etc/view.xml
+index 8c7500d..f2f004c 100644
+--- a/vendor/magento/module-catalog/etc/view.xml
++++ b/vendor/magento/module-catalog/etc/view.xml
+@@ -7,6 +7,6 @@
+ -->
+ <view xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/view.xsd">
+     <vars module="Magento_Catalog">
+-        <var name="product_image_white_borders">1</var>
++        <var name="product_image_white_borders">0</var>
+     </vars>
+ </view>
+diff --git a/vendor/magento/module-catalog/view/frontend/templates/product/image_with_borders.phtml b/vendor/magento/module-catalog/view/frontend/templates/product/image_with_borders.phtml
+index c3280c5..4d7a825 100644
+--- a/vendor/magento/module-catalog/view/frontend/templates/product/image_with_borders.phtml
++++ b/vendor/magento/module-catalog/view/frontend/templates/product/image_with_borders.phtml
+@@ -13,7 +13,5 @@
+         <img class="product-image-photo"
+              <?php /* @escapeNotVerified */ echo $block->getCustomAttributes(); ?>
+              src="<?php /* @escapeNotVerified */ echo $block->getImageUrl(); ?>"
+-             width="<?php /* @escapeNotVerified */ echo $block->getResizedImageWidth(); ?>"
+-             height="<?php /* @escapeNotVerified */ echo $block->getResizedImageHeight(); ?>"
+              alt="<?php /* @escapeNotVerified */ echo $block->stripTags($block->getLabel(), null, true); ?>"/></span>
+ </span>
+diff --git a/vendor/magento/theme-adminhtml-backend/etc/view.xml b/vendor/magento/theme-adminhtml-backend/etc/view.xml
+index de6b0cf..f352974 100644
+--- a/vendor/magento/theme-adminhtml-backend/etc/view.xml
++++ b/vendor/magento/theme-adminhtml-backend/etc/view.xml
+@@ -9,6 +9,9 @@
+     <vars module="Js_Bundle">
+         <var name="bundle_size">1MB</var>
+     </vars>
++    <vars module="Magento_Catalog">
++        <var name="product_image_white_borders">0</var>
++    </vars>
+     <media>
+         <images module="Magento_Catalog">
+             <image id="product_listing_thumbnail" type="thumbnail">
+diff --git a/lib/web/mage/gallery/gallery.less b/lib/web/mage/gallery/gallery.less
+index fc9d09e..2fd877d 100644
+--- a/lib/web/mage/gallery/gallery.less
++++ b/lib/web/mage/gallery/gallery.less
+@@ -691,23 +691,15 @@
+ }
+ 
+ .fotorama__nav-wrap {
+-    .fotorama_vertical_ratio {
+-        .fotorama__img {
+-            .translateY(-50%);
+-            height: auto;
+-            position: absolute;
+-            top: 50%;
+-            width: 100%;
+-        }
+-    }
+-    .fotorama_horizontal_ratio {
+-        .fotorama__img {
+-            .translateX(-50%);
+-            height: 100%;
+-            left: 50%;
+-            position: absolute;
+-            width: auto;
+-        }
++    .fotorama__img {
++        bottom: 0;
++        height: auto;
++        left: 0;
++        margin: auto;
++        max-width: 100%;
++        position: absolute;
++        right: 0;
++        top: 0;
+     }
+ }
+ 
