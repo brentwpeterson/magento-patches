@@ -1,4 +1,4 @@
-**Helpful shortcuts for bin/magento
+# Helpful shortcuts for bin/magento
 
 | CLI Command | Shortcut | Description |
 | ----------  | -------- | --- |
