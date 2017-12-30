@@ -12,11 +12,11 @@
 | app:config:dump | | Create dump of application |
 | app:config:import | | Import data from shared configuration files to appropriate data storage |
 | **cache** | |
-| cache:clean | | Cleans cache type(s) |
-| cache:disable | | Disables cache type(s) |
-| cache:enable  | | Enables cache type(s) |
-| cache:flush | | Flushes cache storage used by cache type(s) |
-| cache:status  | | Checks cache status |
+| cache:clean | c:c| Cleans cache type(s) |
+| cache:disable | c:d | Disables cache type(s) |
+| cache:enable  | c:e | Enables cache type(s) |
+| cache:flush | c:f | Flushes cache storage used by cache type(s) |
+| cache:status  | c:s | Checks cache status |
 | **catalog** | |
 | catalog:images:resize | | Creates resized product images |
 | catalog:product:attributes:cleanup || Removes unused product attributes. |
