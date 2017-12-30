@@ -31,8 +31,8 @@
 | **customer** | |
 | customer:\hash:upgrade | | Upgrade customer's hash according to the latest algorithm |
 | **deploy** | |
-| deploy:mode:set | d\:m:set | Set application mode. |
-| deploy:mode:show | d\:m:sho | Displays current application mode. |
+| deploy:mode:set | d:\m:set | Set application mode. |
+| deploy:mode:show | d:\m:sho | Displays current application mode. |
 | **dev** | |
 | dev:di:info | | Provides information on Dependency Injection configuration for the Command. |
 | dev:query-log:disable | | Disable DB query logging |
