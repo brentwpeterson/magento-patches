@@ -20,20 +20,20 @@
 | **catalog** | |
 | catalog:images:resize | | Creates resized product images |
 | catalog:product:attributes:cleanup       Removes unused product attributes. |
-| **config** |
+| **config** | |
 | config:sensitive:set | |  Set sensitive configuration values |
 | config:set  | | Change system configuration |
 | config:show | | Shows configuration value for given path. If path is not specified, all saved values will be shown |
-| **cron |
+| **cron** | |
 | cron:install  | | Generates and installs crontab for current user |
 | cron:remove | | Removes tasks from crontab |
 | cron:run  | | Runs jobs by schedule |
-| customer |
+| **customer** | |
 | customer:hash:upgrade | | Upgrade customer's hash according to the latest algorithm |
-| **deploy |
+| **deploy** | |
 | deploy:mode:set | | Set application mode. |
 | deploy:mode:show | | Displays current application mode. |
-| **dev |
+| **dev** | |
 | dev:di:info | | Provides information on Dependency Injection configuration for the Command. |
 | dev:query-log:disable | | Disable DB query logging |
 | dev:query-log:enable | |  Enable DB query logging |
@@ -41,20 +41,20 @@
 | dev:template-hints:disable | | Disable frontend template hints. A cache flush might be required. |
 | dev:template-hints:enable | | Enable frontend template hints. A cache flush might be required. |
 | dev:tests:run | | Runs tests |
-| dev:urn-catalog:generate | | Generates the catalog of URNs to *.xsd mappings for the IDE to highlight xml. |
+| dev:urn-catalog:generate | | Generates the catalog of URNs to \*.xsd mappings for the IDE to highlight xml. |
 | dev:xml:convert | | Converts XML file using XSL style sheets |
-| **i18n |
+| **i18n**  | |
 | i18n:collect-phrases | |  Discovers phrases in the codebase |
 | i18n:pack  | | Saves language package |
 | i18n:uninstall | | Uninstalls language packages |
-| **indexer |
+| **indexer** | |
 | indexer:info  | | Shows allowed Indexers |
 | indexer:reindex | | Reindexes Data |
 | indexer:reset | | Resets indexer status to invalid |
 | indexer:set-mode | | Sets index mode type |
 | indexer:show-mode | | Shows Index Mode |
 | indexer:status | | Shows status of Indexer |
-| **info |
+| **info** | | 
 | info:adminuri | | Displays the Magento Admin URI |
 | info:backups:list | | Prints list of available backup files |
 | info:currency:list | | Displays the list of available currencies |
@@ -63,21 +63,21 @@
 | info:dependencies:show-modules-circular  Shows number of circular dependencies between modules |
 | info:language:list | | Displays the list of available language locales |
 | info:timezone:list | | Displays the list of available timezones |
-| **maintenance |
+| **maintenance** |  |
 | maintenance:allow-ips | | Sets maintenance mode exempt IPs |
 | maintenance:disable |Disables maintenance mode |
 | maintenance:enable | | Enables maintenance mode |
 | maintenance:status | | Displays maintenance mode status |
-| **module |
+| **module** | |
 | module:disable | | Disables specified modules |
 | module:enable | | Enables specified modules |
 | module:status | | Displays status of modules |
 | module:uninstall | | Uninstalls modules installed by composer |
-| **sampledata |
+| **sampledata** | |
 | sampledata:deploy | | Deploy sample data modules |
 | sampledata:remove | | Remove all sample data packages from composer.json |
 | sampledata:reset | | Reset all sample data modules for re-installation |
-| **setup |
+| **setup** | |
 | setup:backup  | | Takes backup of Magento Application code base, media and database |
 | setup:config:set | | Creates or modifies the deployment configuration |
 | setup:cron:run | | Runs cron job scheduled for setup application |
@@ -92,10 +92,10 @@
 | setup:store-config:set | |  Installs the store configuration. Deprecated since 2.2.0. Use config:set instead |
 | setup:uninstall | | Uninstalls the Magento application |
 | setup:upgrade | | Upgrades the Magento application, DB data, and schema |
-| **store |
+| **store** | |
 | store:list  | | Displays the list of stores |
 | store:website:list | | Displays the list of websites |
-| **theme |
+| **theme** | |
 | theme:uninstall | | Uninstalls theme |
-| **varnish |
+| **varnish** | |
 | varnish:vcl:ge |
