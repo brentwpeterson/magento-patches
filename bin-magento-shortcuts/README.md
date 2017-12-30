@@ -1,7 +1,7 @@
 # Helpful shortcuts for bin/magento
 
-| CLI Command | Shortcut |
-| ----------  | -------- |
+| CLI Command | Shortcut | Description |
+| ----------  | -------- | --- |
 vailable commands:  | |
 | help | | Displays help for a command |
 | list | | Lists commands |
