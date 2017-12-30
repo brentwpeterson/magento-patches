@@ -19,7 +19,7 @@
 | cache:status  | | Checks cache status |
 | **catalog** | |
 | catalog:images:resize | | Creates resized product images |
-| catalog:product:attributes:cleanup | Removes unused product attributes. |
+| catalog:product:attributes:cleanup || Removes unused product attributes. |
 | **config** | |
 | config:sensitive:set | |  Set sensitive configuration values |
 | config:set  | | Change system configuration |
@@ -29,7 +29,7 @@
 | cron:remove | | Removes tasks from crontab |
 | cron:run  | | Runs jobs by schedule |
 | **customer** | |
-| customer:hash:upgrade | | Upgrade customer's hash according to the latest algorithm |
+| customer:\hash:upgrade | | Upgrade customer's hash according to the latest algorithm |
 | **deploy** | |
 | deploy:mode:set | | Set application mode. |
 | deploy:mode:show | | Displays current application mode. |
@@ -60,12 +60,12 @@
 | info:currency:list | | Displays the list of available currencies |
 | info:dependencies:show-framework | | Shows number of dependencies on Magento framework |
 | info:dependencies:show-modules | | Shows number of dependencies between modules |
-| info:dependencies:show-modules-circular  Shows number of circular dependencies between modules |
+| info:dependencies:show-modules-circular | | Shows number of circular dependencies between modules |
 | info:language:list | | Displays the list of available language locales |
 | info:timezone:list | | Displays the list of available timezones |
 | **maintenance** |  |
 | maintenance:allow-ips | | Sets maintenance mode exempt IPs |
-| maintenance:disable |Disables maintenance mode |
+| maintenance:disable | | Disables maintenance mode |
 | maintenance:enable | | Enables maintenance mode |
 | maintenance:status | | Displays maintenance mode status |
 | **module** | |
