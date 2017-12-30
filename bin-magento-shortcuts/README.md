@@ -48,12 +48,12 @@
 | i18n:pack  | | Saves language package |
 | i18n:uninstall | | Uninstalls language packages |
 | **indexer** | |
-| indexer:info  | | Shows allowed Indexers |
-| indexer:reindex | | Reindexes Data |
-| indexer:reset | | Resets indexer status to invalid |
-| indexer:set-mode | | Sets index mode type |
-| indexer:show-mode | | Shows Index Mode |
-| indexer:status | | Shows status of Indexer |
+| indexer:info  | i:i | Shows allowed Indexers |
+| indexer:reindex | i:rei | Reindexes Data |
+| indexer:reset | i:res | Resets indexer status to invalid |
+| indexer:set-mode | i:set | Sets index mode type |
+| indexer:show-mode | i:sho | Shows Index Mode |
+| indexer:status | i:sta | Shows status of Indexer |
 | **info** | | 
 | info:adminuri | | Displays the Magento Admin URI |
 | info:backups:list | | Prints list of available backup files |
