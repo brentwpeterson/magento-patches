@@ -19,7 +19,7 @@
 | cache:status  | | Checks cache status |
 | **catalog** | |
 | catalog:images:resize | | Creates resized product images |
-| catalog:product:attributes:cleanup       Removes unused product attributes. |
+| catalog:product:attributes:cleanup | Removes unused product attributes. |
 | **config** | |
 | config:sensitive:set | |  Set sensitive configuration values |
 | config:set  | | Change system configuration |
