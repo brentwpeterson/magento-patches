@@ -1,0 +1,350 @@
+diff --git a/vendor/magento/module-customer/Model/Indexer/Source.php b/vendor/magento/module-customer/Model/Indexer/Source.php
+new file mode 100644
+index 0000000..2310953
+--- /dev/null
++++ b/vendor/magento/module-customer/Model/Indexer/Source.php
+@@ -0,0 +1,154 @@
++<?php
++/**
++ * Copyright © 2016 Magento. All rights reserved.
++ * See COPYING.txt for license details.
++ */
++namespace Magento\Customer\Model\Indexer;
++
++use Magento\Customer\Model\ResourceModel\Customer\Indexer\Collection;
++use Magento\Framework\App\ResourceConnection\SourceProviderInterface;
++use Traversable;
++use Magento\Framework\Exception\LocalizedException;
++
++/**
++ * Customers data batch generator for customer_grid indexer
++ */
++class Source implements \IteratorAggregate, \Countable, SourceProviderInterface
++{
++    /**
++     * @var Collection
++     */
++    private $customerCollection;
++
++    /**
++     * @var int
++     */
++    private $batchSize;
++
++    /**
++     * @param \Magento\Customer\Model\ResourceModel\Customer\Indexer\CollectionFactory $collection
++     * @param int $batchSize
++     */
++    public function __construct(
++        \Magento\Customer\Model\ResourceModel\Customer\Indexer\CollectionFactory $collectionFactory,
++        $batchSize = 10000
++    ) {
++        $this->customerCollection = $collectionFactory->create();
++        $this->batchSize = $batchSize;
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function getMainTable()
++    {
++        return $this->customerCollection->getMainTable();
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function getIdFieldName()
++    {
++        return $this->customerCollection->getIdFieldName();
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function addFieldToSelect($fieldName, $alias = null)
++    {
++        $this->customerCollection->addFieldToSelect($fieldName, $alias);
++        return $this;
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function getSelect()
++    {
++        return $this->customerCollection->getSelect();
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function addFieldToFilter($attribute, $condition = null)
++    {
++        $this->customerCollection->addFieldToFilter($attribute, $condition);
++        return $this;
++    }
++
++    /**
++     * @return int
++     */
++    public function count()
++    {
++        return $this->customerCollection->getSize();
++    }
++
++    /**
++     * Retrieve an iterator
++     *
++     * @return Traversable
++     */
++    public function getIterator()
++    {
++        $this->customerCollection->setPageSize($this->batchSize);
++        $lastPage = $this->customerCollection->getLastPageNumber();
++        $pageNumber = 0;
++        do {
++            $this->customerCollection->clear();
++            $this->customerCollection->setCurPage($pageNumber);
++            foreach ($this->customerCollection->getItems() as $key => $value) {
++                yield $key => $value;
++            }
++            $pageNumber++;
++        } while ($pageNumber <= $lastPage);
++    }
++
++    /**
++     * Add attribute to entities in collection
++     *
++     * If $attribute == '*' select all attributes
++     *
++     * @param array|string|integer|\Magento\Framework\App\Config\Element $attribute
++     * @param bool|string $joinType flag for joining attribute
++     * @return $this
++     * @throws LocalizedException
++     */
++    public function addAttributeToSelect($attribute, $joinType = false)
++    {
++        return $this->customerCollection->addAttributeToSelect($attribute, $joinType);
++    }
++
++    /**
++     * Add attribute from joined entity to select
++     *
++     * Examples:
++     * ('billing_firstname', 'customer_address/firstname', 'default_billing')
++     * ('billing_lastname', 'customer_address/lastname', 'default_billing')
++     * ('shipping_lastname', 'customer_address/lastname', 'default_billing')
++     * ('shipping_postalcode', 'customer_address/postalcode', 'default_shipping')
++     * ('shipping_city', $cityAttribute, 'default_shipping')
++     *
++     * Developer is encouraged to use existing instances of attributes and entities
++     * After first use of string entity name it will be cached in the collection
++     *
++     * @todo connect between joined attributes of same entity
++     * @param string $alias alias for the joined attribute
++     * @param string|\Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute
++     * @param string $bind attribute of the main entity to link with joined $filter
++     * @param string $filter primary key for the joined entity (entity_id default)
++     * @param string $joinType inner|left
++     * @param null $storeId
++     * @return $this
++     * @throws LocalizedException
++     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
++     * @SuppressWarnings(PHPMD.NPathComplexity)
++     */
++    public function joinAttribute($alias, $attribute, $bind, $filter = null, $joinType = 'inner', $storeId = null)
++    {
++        return $this->customerCollection->joinAttribute($alias, $attribute, $bind, $filter, $joinType, $storeId);
++    }
++}
+diff --git a/vendor/magento/module-customer/Model/ResourceModel/Customer/Indexer/Collection.php b/vendor/magento/module-customer/Model/ResourceModel/Customer/Indexer/Collection.php
+new file mode 100644
+index 0000000..5b9716a
+--- /dev/null
++++ b/vendor/magento/module-customer/Model/ResourceModel/Customer/Indexer/Collection.php
+@@ -0,0 +1,20 @@
++<?php
++/**
++ * Copyright © 2016 Magento. All rights reserved.
++ * See COPYING.txt for license details.
++ */
++namespace Magento\Customer\Model\ResourceModel\Customer\Indexer;
++
++/**
++ * Customers collection for customer_grid indexer
++ */
++class Collection extends \Magento\Customer\Model\ResourceModel\Customer\Collection
++{
++    /**
++     * @inheritdoc
++     */
++    protected function beforeAddLoadedItem(\Magento\Framework\DataObject $item)
++    {
++        return $item;
++    }
++}
+diff --git a/vendor/magento/module-customer/etc/indexer.xml b/vendor/magento/module-customer/etc/indexer.xml
+index b48592c..5f64442 100644
+--- a/vendor/magento/module-customer/etc/indexer.xml
++++ b/vendor/magento/module-customer/etc/indexer.xml
+@@ -11,7 +11,7 @@
+         <title translate="true">Customer Grid</title>
+         <description translate="true">Rebuild Customer grid index</description>
+ 
+-        <fieldset name="customer" source="Magento\Customer\Model\ResourceModel\Customer\Collection"
++        <fieldset name="customer" source="Magento\Customer\Model\Indexer\Source"
+                   provider="Magento\Customer\Model\Indexer\AttributeProvider">
+             <field name="name" xsi:type="searchable" dataType="text" handler="CustomerNameHandler"/>
+             <field name="email" xsi:type="searchable" dataType="varchar"/>
+diff --git a/vendor/magento/framework/Indexer/Action/Base.php b/vendor/magento/framework/Indexer/Action/Base.php
+index e7edcae..d761f38 100644
+--- a/vendor/magento/framework/Indexer/Action/Base.php
++++ b/vendor/magento/framework/Indexer/Action/Base.php
+@@ -37,11 +37,13 @@ class Base implements ActionInterface
+ 
+     /**
+      * @var AdapterInterface
++     * @deprecated
+      */
+     protected $connection;
+ 
+     /**
+      * @var SourceProviderInterface[]
++     * @deprecated
+      */
+     protected $sources;
+ 
+@@ -52,6 +54,7 @@ class Base implements ActionInterface
+ 
+     /**
+      * @var HandlerInterface[]
++     * @deprecated
+      */
+     protected $handlers;
+ 
+@@ -62,6 +65,7 @@ class Base implements ActionInterface
+ 
+     /**
+      * @var array
++     * @deprecated
+      */
+     protected $columnTypesMap = [
+         'varchar'    => ['type' => Table::TYPE_TEXT, 'size' => 255],
+@@ -71,11 +75,13 @@ class Base implements ActionInterface
+ 
+     /**
+      * @var array
++     * @deprecated
+      */
+     protected $filterColumns;
+ 
+     /**
+      * @var array
++     * @deprecated
+      */
+     protected $searchColumns;
+ 
+@@ -96,6 +102,7 @@ class Base implements ActionInterface
+ 
+     /**
+      * @var String
++     * @deprecated
+      */
+     protected $string;
+ 
+@@ -106,11 +113,13 @@ class Base implements ActionInterface
+ 
+     /**
+      * @var array
++     * @deprecated
+      */
+     protected $filterable = [];
+ 
+     /**
+      * @var array
++     * @deprecated
+      */
+     protected $searchable = [];
+ 
+@@ -272,6 +281,7 @@ class Base implements ActionInterface
+     protected function createResultCollection()
+     {
+         $select = $this->getPrimaryResource()->getSelect();
++        $select->reset(\Magento\Framework\DB\Select::COLUMNS);
+         $select->columns($this->getPrimaryResource()->getIdFieldName());
+         foreach ($this->data['fieldsets'] as $fieldset) {
+             if (isset($fieldset['references'])) {
+@@ -342,6 +352,8 @@ class Base implements ActionInterface
+      *
+      * @param array $field
+      * @return void
++     *
++     * @deprecated
+      */
+     protected function saveFieldByType($field)
+     {
+diff --git a/vendor/magento/framework/Indexer/Action/Entity.php b/vendor/magento/framework/Indexer/Action/Entity.php
+index e88d281..b8390b9 100644
+--- a/vendor/magento/framework/Indexer/Action/Entity.php
++++ b/vendor/magento/framework/Indexer/Action/Entity.php
+@@ -24,6 +24,6 @@ class Entity extends Base
+     {
+         return !count($ids)
+             ? $this->createResultCollection()
+-            : $this->createResultCollection()->addFieldToFilter($this->getPrimaryResource()->getRowIdFieldName(), $ids);
++            : $this->createResultCollection()->addFieldToFilter($this->getPrimaryResource()->getIdFieldName(), $ids);
+     }
+ }
+diff --git a/vendor/magento/framework/Indexer/SaveHandler/Batch.php b/vendor/magento/framework/Indexer/SaveHandler/Batch.php
+index 31883fa..7d53e55 100644
+--- a/vendor/magento/framework/Indexer/SaveHandler/Batch.php
++++ b/vendor/magento/framework/Indexer/SaveHandler/Batch.php
+@@ -10,27 +10,23 @@ class Batch
+     /**
+      * @param \Traversable $documents
+      * @param int $size
+-     * @return array
++     * @return \Generator
+      */
+     public function getItems(\Traversable $documents, $size)
+     {
+-        if (count($documents) == 0) {
+-            return [];
+-        }
+-
+         $i = 0;
+-        $batch = $items = [];
++        $batch = [];
++
+         foreach ($documents as $documentName => $documentValue) {
+             $batch[$documentName] = $documentValue;
+-            if (++$i >= $size) {
+-                $items[] = $batch;
++            if (++$i == $size) {
++                yield $batch;
+                 $i = 0;
+                 $batch = [];
+             }
+         }
+         if (count($batch) > 0) {
+-            $items[] = $batch;
++            yield $batch;
+         }
+-        return $items;
+     }
+ }
+diff --git a/vendor/magento/framework/Indexer/Test/Unit/BatchTest.php b/vendor/magento/framework/Indexer/Test/Unit/BatchTest.php
+index 0df9812..1571bba 100644
+--- a/vendor/magento/framework/Indexer/Test/Unit/BatchTest.php
++++ b/vendor/magento/framework/Indexer/Test/Unit/BatchTest.php
+@@ -27,7 +27,8 @@ class BatchTest extends \PHPUnit_Framework_TestCase
+     public function testGetItems(array $itemsData, $size, array $expected)
+     {
+         $items = new \ArrayObject($itemsData);
+-        $this->assertSame($expected, $this->object->getItems($items, $size));
++        $data = $this->object->getItems($items, $size);
++        $this->assertSame($expected, iterator_to_array($data));
+     }
+ 
+     /**
