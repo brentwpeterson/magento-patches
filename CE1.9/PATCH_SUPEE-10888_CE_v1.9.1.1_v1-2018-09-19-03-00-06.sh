@@ -1382,28 +1382,19 @@ index 5d03602b3c9..380bc3839b6 100644
          $this->_addDomainPolicyHeader();
 diff --git skin/adminhtml/default/enterprise/images/placeholder/thumbnail.jpg skin/adminhtml/default/enterprise/images/placeholder/thumbnail.jpg
 new file mode 100644
-index 0000000000000000000000000000000000000000..4537aa80b31904bd348d03240a3aad0fc1e531b6
-GIT binary patch
-literal 1110
-zcmex=<NpH&0WUXCHwH#VMg|WcWcYuZ!I^=Xi3x;&fCY$HIapa)SXjB(+1WUFxOjND
-zxwyG``Gf>``2_j6xdp@o1cgOJMMZh|#U;c<B!omnML>oyG6VInuyV4pa*FVB^NNrR
-z{vTiv<Y4e-NMUAFVqg+vWEN!ne}qAvfq{_~=vt72p@5MI=teen4o)s^pn|Oe3`~s7
-z%uFoIAXfub*8=4kSOi&x6b&8OgaZ@Vl?p|S8YeE~P<GmQP&DY`2NmO_q9#r*F>wh=
-zDOELf4NWZ*Q!{f5ODks=S2uSLPp{yR(6I1`$f)F$)U@=B%&g*)(z5c3%Btp;*0%PJ
-z&aO$5r%atTea6gLixw|gx@`H1m8&*w-m-Pu_8mKS9XfpE=&|D`PM*4S`O4L6*Kgds
-z_3+W-Cr_U}fAR9w$4{TXeEs(Q$Io9Ne=#yJL%ap|8JfQYf&OA*VPR%r2l<PUsT_!z
-z1zA`X4cUYo1KAS`g_VpNIYgW$F5GyKQ`tD^gJ@FGMJ_QFlZUDwL0$v<j5v=qk>xYE
-z#}NLy#lXYN2#h>tK?Zw<zYdGKG#Eg5!2~vcriHU!Dn5R1zF<|*xzBP{^(6spO<t4I
-zvzfbUQ$;g6Y!<%BI%B?<W&ZaI3%I8QF-fGzbVV^}Eb4+|&I4xyW_?`p&@S}r`|#QC
-z<}Xb<v~a0|n_C7$8~cn82K(=sR!OI{FF0K_D>6mEeUilshE*Hy*j(qF+<M;8K|GSV
-z$Kb@O;z-ex{S#l_Te>G{;>zIWU6by;Kcgs7b8k_Dmb><W3X897>u;Y^4=QZ3>gxLG
-zb~LAWPTFMu-|K$_u<p`W)W8MBg8N?n3M<|J>&3sVi|&{F)wa6-x1>IbVQclj<sU`E
-z?*FZ-&AR&j*Zd=)(e+<neqF$Ae*e|<zpvKk{@ZJ}|I(WH`c?7YSMA;Y>&vhI3|<Ty
-zYyYjRzqjm0?e#yJ*TD*N+wayNYS6vtD#8#5#Vsj<Az^nP&NVXH`AX}r2xHv$zy6Q3
-z*6s(IarJgb&&9Xw?3T|~@LurZ=5sv9%MiWqKSRj=_o3DKK>Pnqc|CigQNw};zM{-)
-z+urYu`Lm$7*+J-@wv|SJ=iOV=t}%1XJwEwH$d>>{R}oa~TXD_xFi%&h2qRC}O2PB@
-R?3Qo!MRFC;b&UUS0s!NOuyz0d
-
-literal 0
-HcmV?d00001
-
+index 00000000000..4537aa80b31
+--- /dev/null
++++ skin/adminhtml/default/enterprise/images/placeholder/thumbnail.jpg
+@@ -0,0 +1,11 @@
++ÿØÿà JFIF  H H  ÿÛ C 
++
++
++ÿÛ C		ÿÀ  K d" ÿÄ           	
++ÿÄ µ   } !1AQa"q2‘¡#B±ÁRÑğ$3br‚	
++%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyzƒ„…†‡ˆ‰Š’“”•–—˜™š¢£¤¥¦§¨©ª²³´µ¶·¸¹ºÂÃÄÅÆÇÈÉÊÒÓÔÕÖ×ØÙÚáâãäåæçèéêñòóôõö÷øùúÿÄ        	
++ÿÄ µ  w !1AQaq"2B‘¡±Á	#3RğbrÑ
++$4á%ñ&'()*56789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz‚ƒ„…†‡ˆ‰Š’“”•–—˜™š¢£¤¥¦§¨©ª²³´µ¶·¸¹ºÂÃÄÅÆÇÈÉÊÒÓÔÕÖ×ØÙÚâãäåæçèéêòóôõö÷øùúÿÚ   ? ı@¢Š( ¢Š(  O¡šé!ãï7 ªRÎóztP‚J’gkŠ}ehˆ<¡ìjÌ7½Ÿ÷Ğ ”RdŠZ (¢Š (¢Š (¢Š 	ÀÍPšñ¤á>UõïW›îŸ¥fÂ¡¥@FFh †˜ğ0¿Ş5zd‡ ËzšYdG’8è ª±Ü<×	“…ÏA@YŒ0ÈªsYÉ‘éŞ¥¼b‘©Sƒº’ŞïÌ!|Ş¢€*G+Àx8õ¯ÛÎ'Rq‚:ŠŠùFÅlsœf“Oû¯øPº(¢€
++(¢€
++(¢€¾éúVu¿úèşµ¢ßtı+:ßıtZ µ{ş§ñVßız}jÕïúŸÄU[õéõ 7ßê—ıê¯mş½>¿Ò¬_ª_÷ª½·úôúÿ J ±}ş©Ş¦Ø}×ü)×ßê—ıêm‡İÂ€-ÑE QE QE „dTVİá22¹ê*ı^÷ıOâ*­¿úôúÕÛˆŒÑí9æ¨ĞJAÎ [¾ÿ T¿ïU{oõéõş”ë›‘2€ €riÖ¶ï½\ü sƒ@Ş+:(PIİÚ–Ö
++Ç“ØTôPEPEPEPEPMxÖEÃŠuV©ÏŞ>§µME QE QE QEÿÙ
+\ No newline at end of file

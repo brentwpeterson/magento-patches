@@ -157,29 +157,29 @@ echo -e "$APPLIED_REVERTED_PATCH_INFO\n$PATCH_APPLY_REVERT_RESULT\n\n" >> "$APPL
 exit 0
 
 
-SUPEE-10888_CE_v1.9.3.2 | CE_1.9.3.2 | v1 | f22885b5f7ff6f4a81a592108f96c570d4c43feb | Fri Aug 31 10:33:58 2018 +0300 | ce-1.9.3.2-dev
+SUPEE-10888_CE_v1.7.0.2 | CE_1.7.0.2 | v1 | 4ddb73ef820db1849a5609b01d08ce99285ec49f | Mon Sep 3 22:34:57 2018 +0300 | ce-1.7.0.2-dev
 
 __PATCHFILE_FOLLOWS__
 diff --git app/code/core/Mage/Admin/Model/User.php app/code/core/Mage/Admin/Model/User.php
-index 04641fd9f1e..51f7d304fed 100644
+index 2b6c42e7e96..e5049b71e37 100644
 --- app/code/core/Mage/Admin/Model/User.php
 +++ app/code/core/Mage/Admin/Model/User.php
-@@ -66,6 +66,10 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
-     const XML_PATH_FORGOT_EMAIL_TEMPLATE    = 'admin/emails/forgot_email_template';
+@@ -67,6 +67,11 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
      const XML_PATH_FORGOT_EMAIL_IDENTITY    = 'admin/emails/forgot_email_identity';
      const XML_PATH_STARTUP_PAGE             = 'admin/startup/page';
-+
+ 
 +    /** Configuration paths for notifications */
 +    const XML_PATH_ADDITIONAL_EMAILS             = 'general/additional_notification_emails/admin_user_create';
 +    const XML_PATH_NOTIFICATION_EMAILS_TEMPLATE  = 'admin/emails/admin_notification_email_template';
-     /**#@-*/
- 
-     /**
-@@ -692,4 +696,53 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
-     {
-         return now($dayOnly);
-     }
++    /**#@-*/
 +
+     /**
+      * Minimum length of admin password
+      */
+@@ -622,4 +627,52 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
+         return false;
+     }
+ 
 +    /**
 +     * Send notification to general Contact and additional emails when new admin user created.
 +     * You can declare additional emails in Mage_Core general/additional_notification_emails/admin_user_create node.
@@ -230,7 +230,7 @@ index 04641fd9f1e..51f7d304fed 100644
 +    }
  }
 diff --git app/code/core/Mage/Admin/etc/config.xml app/code/core/Mage/Admin/etc/config.xml
-index fb868e61bf7..7681dc21ed6 100644
+index ad1c24d71dd..4d4014262ba 100644
 --- app/code/core/Mage/Admin/etc/config.xml
 +++ app/code/core/Mage/Admin/etc/config.xml
 @@ -84,6 +84,7 @@
@@ -239,10 +239,10 @@ index fb868e61bf7..7681dc21ed6 100644
                  <forgot_email_template>admin_emails_forgot_email_template</forgot_email_template>
 +                <admin_notification_email_template>admin_emails_admin_notification_email_template</admin_notification_email_template>
                  <forgot_email_identity>general</forgot_email_identity>
-                 <password_reset_link_expiration_period>2</password_reset_link_expiration_period>
+                 <password_reset_link_expiration_period>1</password_reset_link_expiration_period>
              </emails>
 diff --git app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php
-index b7d69bfecf9..adcd2706676 100644
+index e6b4f1a65d7..16390685723 100644
 --- app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php
 +++ app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php
 @@ -154,6 +154,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
@@ -254,7 +254,7 @@ index b7d69bfecf9..adcd2706676 100644
                      foreach ($attribute['values'] as &$attributeValue) {
                          if (!$this->getCanReadPrice()) {
 diff --git app/code/core/Mage/Adminhtml/Block/Widget/Grid/Massaction/Abstract.php app/code/core/Mage/Adminhtml/Block/Widget/Grid/Massaction/Abstract.php
-index fe36c3d090a..330869d7c32 100644
+index 974d53cebbc..5cc8ba0780a 100644
 --- app/code/core/Mage/Adminhtml/Block/Widget/Grid/Massaction/Abstract.php
 +++ app/code/core/Mage/Adminhtml/Block/Widget/Grid/Massaction/Abstract.php
 @@ -190,7 +190,7 @@ abstract class Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract extends Mage
@@ -276,7 +276,7 @@ index fe36c3d090a..330869d7c32 100644
          } else {
              return array();
 diff --git app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php
-index 6a9921ac065..a0e413f84d6 100644
+index c92661a02f7..46920f5446b 100644
 --- app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php
 +++ app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php
 @@ -38,6 +38,7 @@ class Mage_Adminhtml_Model_LayoutUpdate_Validator extends Zend_Validate_Abstract
@@ -360,10 +360,10 @@ index 6a9921ac065..a0e413f84d6 100644
                  throw new Exception();
              }
 diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php
-index cce6f64aabe..5e662c839a9 100644
+index 11134cc1b34..1cf3e5daa33 100644
 --- app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php
-@@ -1031,6 +1031,16 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
+@@ -1005,6 +1005,16 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
          }
  
          $product->addData($this->getRequest()->getParam('simple_product', array()));
@@ -381,7 +381,7 @@ index cce6f64aabe..5e662c839a9 100644
  
          $autogenerateOptions = array();
 diff --git app/code/core/Mage/Adminhtml/controllers/Permissions/UserController.php app/code/core/Mage/Adminhtml/controllers/Permissions/UserController.php
-index 1d6eddff4f1..b63f68331e2 100644
+index b1cacfccae2..bbd9acfeb93 100644
 --- app/code/core/Mage/Adminhtml/controllers/Permissions/UserController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Permissions/UserController.php
 @@ -101,6 +101,8 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
@@ -393,7 +393,7 @@ index 1d6eddff4f1..b63f68331e2 100644
              if (!$model->getId() && $id) {
                  Mage::getSingleton('adminhtml/session')->addError($this->__('This user no longer exists.'));
                  $this->_redirect('*/*/');
-@@ -139,6 +141,10 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
+@@ -130,6 +132,10 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
  
              try {
                  $model->save();
@@ -405,7 +405,7 @@ index 1d6eddff4f1..b63f68331e2 100644
                      /*parse_str($uRoles, $uRoles);
                      $uRoles = array_keys($uRoles);*/
 diff --git app/code/core/Mage/Adminhtml/etc/config.xml app/code/core/Mage/Adminhtml/etc/config.xml
-index c33b6e027e9..cefa6869fde 100644
+index 8b8af78a8ae..4978caeb67f 100644
 --- app/code/core/Mage/Adminhtml/etc/config.xml
 +++ app/code/core/Mage/Adminhtml/etc/config.xml
 @@ -54,6 +54,11 @@
@@ -421,10 +421,10 @@ index c33b6e027e9..cefa6869fde 100644
          </template>
          <events>
 diff --git app/code/core/Mage/Checkout/Model/Api/Resource/Customer.php app/code/core/Mage/Checkout/Model/Api/Resource/Customer.php
-index 42e517f4c86..52fbe1deda2 100644
+index a8ba7528abf..444968a8a1d 100644
 --- app/code/core/Mage/Checkout/Model/Api/Resource/Customer.php
 +++ app/code/core/Mage/Checkout/Model/Api/Resource/Customer.php
-@@ -152,7 +152,7 @@ class Mage_Checkout_Model_Api_Resource_Customer extends Mage_Checkout_Model_Api_
+@@ -153,7 +153,7 @@ class Mage_Checkout_Model_Api_Resource_Customer extends Mage_Checkout_Model_Api_
          $customer->setPasswordCreatedAt(time());
          $quote->setCustomer($customer)
              ->setCustomerId(true);
@@ -434,10 +434,10 @@ index 42e517f4c86..52fbe1deda2 100644
      }
  
 diff --git app/code/core/Mage/Checkout/Model/Type/Onepage.php app/code/core/Mage/Checkout/Model/Type/Onepage.php
-index b837ae7bdb0..84c8799c103 100644
+index f86fb50922e..882536d5bad 100644
 --- app/code/core/Mage/Checkout/Model/Type/Onepage.php
 +++ app/code/core/Mage/Checkout/Model/Type/Onepage.php
-@@ -734,6 +734,7 @@ class Mage_Checkout_Model_Type_Onepage
+@@ -693,6 +693,7 @@ class Mage_Checkout_Model_Type_Onepage
          $customer->setPasswordCreatedAt($passwordCreatedTime);
          $quote->setCustomer($customer)
              ->setCustomerId(true);
@@ -446,10 +446,10 @@ index b837ae7bdb0..84c8799c103 100644
  
      /**
 diff --git app/code/core/Mage/Cms/Model/Wysiwyg/Images/Storage.php app/code/core/Mage/Cms/Model/Wysiwyg/Images/Storage.php
-index 9a4133afb1d..e12db7cf133 100644
+index 808e5cec278..66efae0af57 100644
 --- app/code/core/Mage/Cms/Model/Wysiwyg/Images/Storage.php
 +++ app/code/core/Mage/Cms/Model/Wysiwyg/Images/Storage.php
-@@ -283,11 +283,13 @@ class Mage_Cms_Model_Wysiwyg_Images_Storage extends Varien_Object
+@@ -282,11 +282,13 @@ class Mage_Cms_Model_Wysiwyg_Images_Storage extends Varien_Object
          }
          $uploader->setAllowRenameFiles(true);
          $uploader->setFilesDispersion(false);
@@ -468,7 +468,7 @@ index 9a4133afb1d..e12db7cf133 100644
          $result = $uploader->save($targetPath);
  
          if (!$result) {
-@@ -295,8 +297,9 @@ class Mage_Cms_Model_Wysiwyg_Images_Storage extends Varien_Object
+@@ -294,8 +296,9 @@ class Mage_Cms_Model_Wysiwyg_Images_Storage extends Varien_Object
          }
  
          // create thumbnail
@@ -481,10 +481,10 @@ index 9a4133afb1d..e12db7cf133 100644
              'name'     => session_name(),
              'value'    => $this->getSession()->getSessionId(),
 diff --git app/code/core/Mage/Core/etc/config.xml app/code/core/Mage/Core/etc/config.xml
-index e7908ec2d6e..c20a018f1ea 100644
+index ba20946a4cd..718e672ac7d 100644
 --- app/code/core/Mage/Core/etc/config.xml
 +++ app/code/core/Mage/Core/etc/config.xml
-@@ -471,6 +471,11 @@
+@@ -414,6 +414,11 @@
              <reprocess_images>
                  <active>1</active>
              </reprocess_images>
@@ -497,10 +497,10 @@ index e7908ec2d6e..c20a018f1ea 100644
      </default>
      <stores>
 diff --git app/code/core/Mage/Core/etc/system.xml app/code/core/Mage/Core/etc/system.xml
-index 7228fdb52c3..b03da6bac55 100644
+index 8d4969ef4b5..7cabb72a197 100644
 --- app/code/core/Mage/Core/etc/system.xml
 +++ app/code/core/Mage/Core/etc/system.xml
-@@ -1219,6 +1219,16 @@
+@@ -1144,6 +1144,16 @@
                              <show_in_website>0</show_in_website>
                              <show_in_store>0</show_in_store>
                          </extensions_compatibility_mode>
@@ -518,10 +518,10 @@ index 7228fdb52c3..b03da6bac55 100644
                  </security>
                  <dashboard translate="label">
 diff --git app/code/core/Mage/Customer/Helper/Data.php app/code/core/Mage/Customer/Helper/Data.php
-index 3d93d16fe8c..c75a3978cb5 100644
+index e95674fa7f9..5ecbbea447d 100644
 --- app/code/core/Mage/Customer/Helper/Data.php
 +++ app/code/core/Mage/Customer/Helper/Data.php
-@@ -459,6 +459,17 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
+@@ -385,6 +385,17 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
          return Mage::helper('core')->uniqHash();
      }
  
@@ -540,18 +540,18 @@ index 3d93d16fe8c..c75a3978cb5 100644
       * Retrieve customer reset password link expiration period in days
       *
 diff --git app/code/core/Mage/Customer/Model/Customer.php app/code/core/Mage/Customer/Model/Customer.php
-index 26eb04ff350..d23e8f18a10 100644
+index 50e6282f96d..736b6e38cca 100644
 --- app/code/core/Mage/Customer/Model/Customer.php
 +++ app/code/core/Mage/Customer/Model/Customer.php
-@@ -57,6 +57,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
+@@ -60,6 +60,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      const EXCEPTION_INVALID_EMAIL_OR_PASSWORD = 2;
      const EXCEPTION_EMAIL_EXISTS              = 3;
      const EXCEPTION_INVALID_RESET_PASSWORD_LINK_TOKEN = 4;
 +    const EXCEPTION_INVALID_RESET_PASSWORD_LINK_CUSTOMER_ID = 5;
-     /**#@-*/
  
-     /**#@+
-@@ -1390,6 +1391,28 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
+     const SUBSCRIBED_YES = 'yes';
+     const SUBSCRIBED_NO  = 'no';
+@@ -1298,6 +1299,28 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
          return $this;
      }
  
@@ -581,7 +581,7 @@ index 26eb04ff350..d23e8f18a10 100644
       * Check if current reset password link token is expired
       *
 diff --git app/code/core/Mage/Customer/Model/Resource/Customer.php app/code/core/Mage/Customer/Model/Resource/Customer.php
-index 2a9abf9f8b2..6257c519dba 100644
+index 77732240817..5f741f108dd 100755
 --- app/code/core/Mage/Customer/Model/Resource/Customer.php
 +++ app/code/core/Mage/Customer/Model/Resource/Customer.php
 @@ -333,4 +333,25 @@ class Mage_Customer_Model_Resource_Customer extends Mage_Eav_Model_Entity_Abstra
@@ -611,10 +611,10 @@ index 2a9abf9f8b2..6257c519dba 100644
 +    }
  }
 diff --git app/code/core/Mage/Customer/controllers/AccountController.php app/code/core/Mage/Customer/controllers/AccountController.php
-index 2ec2a7ee3df..a2594421a33 100644
+index b1090ae6ebe..2f0008420ab 100644
 --- app/code/core/Mage/Customer/controllers/AccountController.php
 +++ app/code/core/Mage/Customer/controllers/AccountController.php
-@@ -756,9 +756,13 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+@@ -718,8 +718,12 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                  ->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
                  ->loadByEmail($email);
  
@@ -622,14 +622,13 @@ index 2ec2a7ee3df..a2594421a33 100644
 +            $customerId = $customer->getId();
 +            if ($customerId) {
                  try {
-                     $newResetPasswordLinkToken =  $this->_getHelper('customer')->generateResetPasswordLinkToken();
 +                    $newResetPasswordLinkCustomerId = $this->_getHelper('customer')
 +                        ->generateResetPasswordLinkCustomerId($customerId);
 +                    $customer->changeResetPasswordLinkCustomerId($newResetPasswordLinkCustomerId);
+                     $newResetPasswordLinkToken = $this->_getHelper('customer')->generateResetPasswordLinkToken();
                      $customer->changeResetPasswordLinkToken($newResetPasswordLinkToken);
                      $customer->sendPasswordResetConfirmationEmail();
-                 } catch (Exception $exception) {
-@@ -807,7 +811,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+@@ -769,7 +773,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
      public function resetPasswordAction()
      {
          try {
@@ -638,15 +637,15 @@ index 2ec2a7ee3df..a2594421a33 100644
              $resetPasswordLinkToken = (string)$this->getRequest()->getQuery('token');
  
              $this->_validateResetPasswordLinkToken($customerId, $resetPasswordLinkToken);
-@@ -867,6 +871,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+@@ -829,6 +833,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
              $customer->setRpTokenCreatedAt(null);
-             $customer->cleanPasswordsValidationData();
+             $customer->setConfirmation(null);
              $customer->setPasswordCreatedAt(time());
 +            $customer->setRpCustomerId(null);
              $customer->save();
  
              $this->_getSession()->unsetData(self::TOKEN_SESSION_NAME);
-@@ -881,6 +886,25 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+@@ -843,6 +848,25 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
          }
      }
  
@@ -673,23 +672,23 @@ index 2ec2a7ee3df..a2594421a33 100644
       * Check if password reset token is valid
       *
 diff --git app/code/core/Mage/Customer/etc/config.xml app/code/core/Mage/Customer/etc/config.xml
-index 54aaba14c31..bbf408ec786 100644
+index 91e6623194b..1d5e237ad6a 100644
 --- app/code/core/Mage/Customer/etc/config.xml
 +++ app/code/core/Mage/Customer/etc/config.xml
 @@ -28,7 +28,7 @@
  <config>
      <modules>
          <Mage_Customer>
--            <version>1.6.2.0.5.1.2</version>
-+            <version>1.6.2.0.5.1.3</version>
+-            <version>1.6.2.0.1.1.2</version>
++            <version>1.6.2.0.1.1.3</version>
          </Mage_Customer>
      </modules>
      <admin>
-diff --git app/code/core/Mage/Customer/sql/customer_setup/upgrade-1.6.2.0.5.1.2-1.6.2.0.5.1.3.php app/code/core/Mage/Customer/sql/customer_setup/upgrade-1.6.2.0.5.1.2-1.6.2.0.5.1.3.php
+diff --git app/code/core/Mage/Customer/sql/customer_setup/upgrade-1.6.2.0.1.1.2-1.6.2.0.1.1.3.php app/code/core/Mage/Customer/sql/customer_setup/upgrade-1.6.2.0.1.1.2-1.6.2.0.1.1.3.php
 new file mode 100644
 index 00000000000..867227ea4bb
 --- /dev/null
-+++ app/code/core/Mage/Customer/sql/customer_setup/upgrade-1.6.2.0.5.1.2-1.6.2.0.5.1.3.php
++++ app/code/core/Mage/Customer/sql/customer_setup/upgrade-1.6.2.0.1.1.2-1.6.2.0.1.1.3.php
 @@ -0,0 +1,39 @@
 +<?php
 +/**
@@ -731,10 +730,10 @@ index 00000000000..867227ea4bb
 +
 +$installer->endSetup();
 diff --git app/code/core/Mage/Paypal/Model/Express/Checkout.php app/code/core/Mage/Paypal/Model/Express/Checkout.php
-index 96fd886beea..1f14d6267f1 100644
+index 5f02c592efd..e1962425b00 100644
 --- app/code/core/Mage/Paypal/Model/Express/Checkout.php
 +++ app/code/core/Mage/Paypal/Model/Express/Checkout.php
-@@ -992,6 +992,7 @@ class Mage_Paypal_Model_Express_Checkout
+@@ -922,6 +922,7 @@ class Mage_Paypal_Model_Express_Checkout
          $customer->setPasswordHash($customer->hashPassword($customer->getPassword()));
          $customer->save();
          $quote->setCustomer($customer);
@@ -743,7 +742,7 @@ index 96fd886beea..1f14d6267f1 100644
          return $this;
      }
 diff --git app/code/core/Mage/XmlConnect/controllers/ReviewController.php app/code/core/Mage/XmlConnect/controllers/ReviewController.php
-index 3b99ac4b825..73a4932025c 100644
+index 29e23352a2b..8f7726fb8b6 100644
 --- app/code/core/Mage/XmlConnect/controllers/ReviewController.php
 +++ app/code/core/Mage/XmlConnect/controllers/ReviewController.php
 @@ -144,7 +144,7 @@ class Mage_XmlConnect_ReviewController extends Mage_XmlConnect_Controller_Action
@@ -806,7 +805,7 @@ index 586c0fe20a0..d6fa2dac0ec 100644
 +    }
  }
 diff --git app/design/adminhtml/default/default/template/bundle/product/edit/bundle/option.phtml app/design/adminhtml/default/default/template/bundle/product/edit/bundle/option.phtml
-index 9eb4e051ffb..375080250b5 100644
+index ee90c529abe..06cfe317a3f 100644
 --- app/design/adminhtml/default/default/template/bundle/product/edit/bundle/option.phtml
 +++ app/design/adminhtml/default/default/template/bundle/product/edit/bundle/option.phtml
 @@ -209,14 +209,16 @@ var optionIndex = 0;
@@ -835,7 +834,7 @@ index 9eb4e051ffb..375080250b5 100644
  /**
   * Adding event on price type select box of product to hide or show prices for selections
 diff --git app/design/adminhtml/default/default/template/bundle/sales/creditmemo/create/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/creditmemo/create/items/renderer.phtml
-index 0dd0a11c76c..f04204d2e86 100644
+index e21de2e5eca..08a7ed2d0ec 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/creditmemo/create/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/creditmemo/create/items/renderer.phtml
 @@ -49,7 +49,7 @@
@@ -848,7 +847,7 @@ index 0dd0a11c76c..f04204d2e86 100644
              <td>&nbsp;</td>
              <td>&nbsp;</td>
 diff --git app/design/adminhtml/default/default/template/bundle/sales/creditmemo/view/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/creditmemo/view/items/renderer.phtml
-index 4f6ceaffe95..cb8403f7acb 100644
+index c63e2e494ab..fc649f49e40 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/creditmemo/view/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/creditmemo/view/items/renderer.phtml
 @@ -49,7 +49,7 @@
@@ -861,7 +860,7 @@ index 4f6ceaffe95..cb8403f7acb 100644
              <td>&nbsp;</td>
              <td>&nbsp;</td>
 diff --git app/design/adminhtml/default/default/template/bundle/sales/invoice/create/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/invoice/create/items/renderer.phtml
-index e4b9315c6f4..76658722111 100644
+index 6d218cc142b..72087297ffe 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/invoice/create/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/invoice/create/items/renderer.phtml
 @@ -49,7 +49,7 @@
@@ -874,7 +873,7 @@ index e4b9315c6f4..76658722111 100644
              <td>&nbsp;</td>
              <td>&nbsp;</td>
 diff --git app/design/adminhtml/default/default/template/bundle/sales/invoice/view/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/invoice/view/items/renderer.phtml
-index 1ad5eb1ed73..fe7efb7031f 100644
+index 66fa767ba51..c640a39d205 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/invoice/view/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/invoice/view/items/renderer.phtml
 @@ -49,7 +49,7 @@
@@ -887,7 +886,7 @@ index 1ad5eb1ed73..fe7efb7031f 100644
              <td>&nbsp;</td>
              <td>&nbsp;</td>
 diff --git app/design/adminhtml/default/default/template/bundle/sales/order/view/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/order/view/items/renderer.phtml
-index b394906834a..ed998bb7780 100644
+index 0f43f3f225c..610e648dfed 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/order/view/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/order/view/items/renderer.phtml
 @@ -49,7 +49,7 @@
@@ -900,7 +899,7 @@ index b394906834a..ed998bb7780 100644
              <td>&nbsp;</td>
              <td>&nbsp;</td>
 diff --git app/design/adminhtml/default/default/template/bundle/sales/shipment/create/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/shipment/create/items/renderer.phtml
-index 3b5b5f59691..0fd4f916108 100644
+index 5790d7815e8..a587158d474 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/shipment/create/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/shipment/create/items/renderer.phtml
 @@ -49,7 +49,7 @@
@@ -913,7 +912,7 @@ index 3b5b5f59691..0fd4f916108 100644
              <td class="last">&nbsp;</td>
          </tr>
 diff --git app/design/adminhtml/default/default/template/bundle/sales/shipment/view/items/renderer.phtml app/design/adminhtml/default/default/template/bundle/sales/shipment/view/items/renderer.phtml
-index 1878a2b66ba..8b3e5160a76 100644
+index ad525e60c6f..b4a59a18b73 100644
 --- app/design/adminhtml/default/default/template/bundle/sales/shipment/view/items/renderer.phtml
 +++ app/design/adminhtml/default/default/template/bundle/sales/shipment/view/items/renderer.phtml
 @@ -50,7 +50,7 @@
@@ -926,7 +925,7 @@ index 1878a2b66ba..8b3e5160a76 100644
          </tr>
          <?php $_prevOptionId = $attributes['option_id'] ?>
 diff --git app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml
-index 892c5032fab..576988757ae 100644
+index ffe0c33eed5..67761ed3406 100644
 --- app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml
 +++ app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml
 @@ -58,8 +58,8 @@ $_block = $this;
@@ -941,7 +940,7 @@ index 892c5032fab..576988757ae 100644
              <th><?php echo Mage::helper('catalog')->__('Exclude') ?></th>
              <th class="last"><?php echo Mage::helper('catalog')->__('Remove') ?></th>
 diff --git app/design/frontend/base/default/template/bundle/email/order/items/creditmemo/default.phtml app/design/frontend/base/default/template/bundle/email/order/items/creditmemo/default.phtml
-index 51e0ad5e6ad..a22def9566a 100644
+index 8d2d217de9e..b20af3eebf1 100644
 --- app/design/frontend/base/default/template/bundle/email/order/items/creditmemo/default.phtml
 +++ app/design/frontend/base/default/template/bundle/email/order/items/creditmemo/default.phtml
 @@ -43,7 +43,7 @@
@@ -954,7 +953,7 @@ index 51e0ad5e6ad..a22def9566a 100644
          <td>&nbsp;</td>
          <td>&nbsp;</td>
 diff --git app/design/frontend/base/default/template/bundle/email/order/items/invoice/default.phtml app/design/frontend/base/default/template/bundle/email/order/items/invoice/default.phtml
-index 0df4e6ee365..a296568789f 100644
+index 1b5b9b2e56a..e0657f5a13b 100644
 --- app/design/frontend/base/default/template/bundle/email/order/items/invoice/default.phtml
 +++ app/design/frontend/base/default/template/bundle/email/order/items/invoice/default.phtml
 @@ -44,7 +44,7 @@
@@ -967,7 +966,7 @@ index 0df4e6ee365..a296568789f 100644
          <td>&nbsp;</td>
          <td>&nbsp;</td>
 diff --git app/design/frontend/base/default/template/bundle/email/order/items/order/default.phtml app/design/frontend/base/default/template/bundle/email/order/items/order/default.phtml
-index 31e263de164..3902d73b433 100644
+index 4f16505f4f6..dc30fdb88af 100644
 --- app/design/frontend/base/default/template/bundle/email/order/items/order/default.phtml
 +++ app/design/frontend/base/default/template/bundle/email/order/items/order/default.phtml
 @@ -44,7 +44,7 @@
@@ -980,7 +979,7 @@ index 31e263de164..3902d73b433 100644
          <td>&nbsp;</td>
          <td>&nbsp;</td>
 diff --git app/design/frontend/base/default/template/bundle/email/order/items/shipment/default.phtml app/design/frontend/base/default/template/bundle/email/order/items/shipment/default.phtml
-index c347a90f640..684bcbafc04 100644
+index 0f2ae132864..5a39b405118 100644
 --- app/design/frontend/base/default/template/bundle/email/order/items/shipment/default.phtml
 +++ app/design/frontend/base/default/template/bundle/email/order/items/shipment/default.phtml
 @@ -43,7 +43,7 @@
@@ -993,33 +992,33 @@ index c347a90f640..684bcbafc04 100644
          <td>&nbsp;</td>
      </tr>
 diff --git app/design/frontend/base/default/template/bundle/sales/order/creditmemo/items/renderer.phtml app/design/frontend/base/default/template/bundle/sales/order/creditmemo/items/renderer.phtml
-index d13040e775b..fd050741c8a 100644
+index 6677c72a23e..60dd8278367 100644
 --- app/design/frontend/base/default/template/bundle/sales/order/creditmemo/items/renderer.phtml
 +++ app/design/frontend/base/default/template/bundle/sales/order/creditmemo/items/renderer.phtml
-@@ -46,7 +46,7 @@
-         <?php if ($_prevOptionId != $attributes['option_id']): ?>
-             <tr>
-                 <td>
--                    <div class="option-label"><?php echo $attributes['option_label'] ?></div>
-+                    <div class="option-label"><?php echo $this->escapeHtml($attributes['option_label']); ?></div>
-                 </td>
-                 <td>&nbsp;</td>
-                 <td>&nbsp;</td>
+@@ -45,7 +45,7 @@
+     <?php $attributes = $this->getSelectionAttributes($_item) ?>
+     <?php if ($_prevOptionId != $attributes['option_id']): ?>
+     <tr>
+-        <td><div class="option-label"><?php echo $attributes['option_label'] ?></div></td>
++        <td><div class="option-label"><?php echo $this->escapeHtml($attributes['option_label']); ?></div></td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
 diff --git app/design/frontend/base/default/template/bundle/sales/order/invoice/items/renderer.phtml app/design/frontend/base/default/template/bundle/sales/order/invoice/items/renderer.phtml
-index bb3ba810b82..49736ba4202 100644
+index 5ae806234d1..72fdf2ebe93 100644
 --- app/design/frontend/base/default/template/bundle/sales/order/invoice/items/renderer.phtml
 +++ app/design/frontend/base/default/template/bundle/sales/order/invoice/items/renderer.phtml
-@@ -46,7 +46,7 @@
-         <?php if ($_prevOptionId != $attributes['option_id']): ?>
-             <tr>
-                 <td>
--                    <div class="option-label"><?php echo $attributes['option_label'] ?></div>
-+                    <div class="option-label"><?php echo $this->escapeHtml($attributes['option_label']); ?></div>
-                 </td>
-                 <td>&nbsp;</td>
-                 <td>&nbsp;</td>
+@@ -45,7 +45,7 @@
+     <?php $attributes = $this->getSelectionAttributes($_item) ?>
+     <?php if ($_prevOptionId != $attributes['option_id']): ?>
+     <tr>
+-        <td><div class="option-label"><?php echo $attributes['option_label'] ?></div></td>
++        <td><div class="option-label"><?php echo $this->escapeHtml($attributes['option_label']); ?></div></td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
 diff --git app/design/frontend/base/default/template/bundle/sales/order/items/renderer.phtml app/design/frontend/base/default/template/bundle/sales/order/items/renderer.phtml
-index 01dadca502e..034f7463d35 100644
+index f39d86acb8e..1bf48b0cc4f 100644
 --- app/design/frontend/base/default/template/bundle/sales/order/items/renderer.phtml
 +++ app/design/frontend/base/default/template/bundle/sales/order/items/renderer.phtml
 @@ -43,7 +43,7 @@
@@ -1032,7 +1031,7 @@ index 01dadca502e..034f7463d35 100644
          <td>&nbsp;</td>
          <td>&nbsp;</td>
 diff --git app/design/frontend/base/default/template/bundle/sales/order/shipment/items/renderer.phtml app/design/frontend/base/default/template/bundle/sales/order/shipment/items/renderer.phtml
-index 057e7567503..68163cfd71a 100644
+index e77bcf80472..70d2966830a 100644
 --- app/design/frontend/base/default/template/bundle/sales/order/shipment/items/renderer.phtml
 +++ app/design/frontend/base/default/template/bundle/sales/order/shipment/items/renderer.phtml
 @@ -44,7 +44,7 @@
@@ -1045,7 +1044,7 @@ index 057e7567503..68163cfd71a 100644
          <td>&nbsp;</td>
      </tr>
 diff --git app/design/frontend/base/default/template/downloadable/checkout/multishipping/item/downloadable.phtml app/design/frontend/base/default/template/downloadable/checkout/multishipping/item/downloadable.phtml
-index 8ae0d244e4a..24f053d99d8 100644
+index a04edbbba7f..e9a8b13e70a 100644
 --- app/design/frontend/base/default/template/downloadable/checkout/multishipping/item/downloadable.phtml
 +++ app/design/frontend/base/default/template/downloadable/checkout/multishipping/item/downloadable.phtml
 @@ -48,7 +48,7 @@
@@ -1058,72 +1057,72 @@ index 8ae0d244e4a..24f053d99d8 100644
              <dd><?php echo $this->escapeHtml($link->getTitle()); ?></dd>
          <?php endforeach; ?>
 diff --git app/design/frontend/base/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml app/design/frontend/base/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml
-index 2bc93626784..e84a8d92c01 100644
+index 794c1d125eb..917d558c4cc 100644
 --- app/design/frontend/base/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml
 +++ app/design/frontend/base/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml
 @@ -39,7 +39,7 @@
          <?php endif; ?>
          <?php if ($links = $this->getLinks()->getPurchasedItems()): ?>
-             <dl style="margin:0; padding:0;">
--                <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
-+                <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
-                 <?php foreach ($links as $link): ?>
-                     <dd style="margin:0; padding:0 0 0 9px;"><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
-                 <?php endforeach; ?>
+         <dl style="margin:0; padding:0;">
+-            <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
++            <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
+             <?php foreach ($links as $link): ?>
+                 <dd style="margin:0; padding:0 0 0 9px;"><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
+             <?php endforeach; ?>
 diff --git app/design/frontend/base/default/template/downloadable/email/order/items/invoice/downloadable.phtml app/design/frontend/base/default/template/downloadable/email/order/items/invoice/downloadable.phtml
-index c1610a9379f..a8b4ae591a0 100644
+index daf14838c99..7d7873b206a 100644
 --- app/design/frontend/base/default/template/downloadable/email/order/items/invoice/downloadable.phtml
 +++ app/design/frontend/base/default/template/downloadable/email/order/items/invoice/downloadable.phtml
-@@ -42,7 +42,7 @@
+@@ -39,7 +39,7 @@
          <?php endif; ?>
          <?php if ($links = $this->getLinks()->getPurchasedItems()): ?>
-             <dl style="margin:0; padding:0;">
--                <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
-+                <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
-                 <?php foreach ($links as $link): ?>
-                     <dd style="margin:0; padding:0 0 0 9px;">
-                         <?php echo $this->escapeHtml($link->getLinkTitle()); ?>&nbsp;
+         <dl style="margin:0; padding:0;">
+-            <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
++            <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
+             <?php foreach ($links as $link): ?>
+                 <dd style="margin:0; padding:0 0 0 9px;">
+                     <?php echo $this->escapeHtml($link->getLinkTitle()); ?>&nbsp;
 diff --git app/design/frontend/base/default/template/downloadable/email/order/items/order/downloadable.phtml app/design/frontend/base/default/template/downloadable/email/order/items/order/downloadable.phtml
-index 0440941a716..fbd0ba137f7 100644
+index d16f6cf1542..bbbf5e59612 100644
 --- app/design/frontend/base/default/template/downloadable/email/order/items/order/downloadable.phtml
 +++ app/design/frontend/base/default/template/downloadable/email/order/items/order/downloadable.phtml
 @@ -39,7 +39,7 @@
          <?php endif; ?>
          <?php if ($links = $this->getLinks()->getPurchasedItems()): ?>
-             <dl style="margin:0; padding:0;">
--                <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
-+                <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
-                 <?php foreach ($links as $link): ?>
-                     <dd style="margin:0; padding:0 0 0 9px;">
-                         <?php echo $this->escapeHtml($link->getLinkTitle()); ?>&nbsp;
+         <dl style="margin:0; padding:0;">
+-            <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
++            <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
+             <?php foreach ($links as $link): ?>
+                 <dd style="margin:0; padding:0 0 0 9px;">
+                     <?php echo $this->escapeHtml($link->getLinkTitle()); ?>&nbsp;
 diff --git app/design/frontend/base/default/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml app/design/frontend/base/default/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml
-index 49ff4ade2cc..ce66f830d1a 100644
+index e373cabb3a5..d0e2b8c8b19 100644
 --- app/design/frontend/base/default/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml
 +++ app/design/frontend/base/default/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml
 @@ -54,7 +54,7 @@
-     <!-- downloadable -->
-     <?php if ($links = $this->getLinks()): ?>
-         <dl class="item-options">
--            <dt><?php echo $this->getLinksTitle() ?></dt>
-+            <dt><?php echo $this->escapeHtml($this->getLinksTitle()); ?></dt>
-             <?php foreach ($links->getPurchasedItems() as $link): ?>
-                 <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
-             <?php endforeach; ?>
+         <!-- downloadable -->
+         <?php if ($links = $this->getLinks()): ?>
+             <dl class="item-options">
+-                <dt><?php echo $this->getLinksTitle() ?></dt>
++                <dt><?php echo $this->escapeHtml($this->getLinksTitle()); ?></dt>
+                 <?php foreach ($links->getPurchasedItems() as $link): ?>
+                     <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
+                 <?php endforeach; ?>
 diff --git app/design/frontend/base/default/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml app/design/frontend/base/default/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml
-index d6615234845..54e44776cb2 100644
+index 7c6b7bda83e..80d0e139ee6 100644
 --- app/design/frontend/base/default/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml
 +++ app/design/frontend/base/default/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml
 @@ -55,7 +55,7 @@
-     <!-- downloadable -->
-     <?php if ($links = $this->getLinks()): ?>
-         <dl class="item-options">
--            <dt><?php echo $this->getLinksTitle() ?></dt>
-+            <dt><?php echo $this->escapeHtml($this->getLinksTitle()); ?></dt>
-             <?php foreach ($links->getPurchasedItems() as $link): ?>
-                 <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
-             <?php endforeach; ?>
+         <!-- downloadable -->
+         <?php if ($links = $this->getLinks()): ?>
+             <dl class="item-options">
+-                <dt><?php echo $this->getLinksTitle() ?></dt>
++                <dt><?php echo $this->escapeHtml($this->getLinksTitle()); ?></dt>
+                 <?php foreach ($links->getPurchasedItems() as $link): ?>
+                     <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
+                 <?php endforeach; ?>
 diff --git app/design/frontend/default/iphone/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml app/design/frontend/default/iphone/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml
-index 37639169c1b..60d0bcc90c9 100644
+index e0cd46c3b40..12003d45a18 100644
 --- app/design/frontend/default/iphone/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml
 +++ app/design/frontend/default/iphone/template/downloadable/sales/order/creditmemo/items/renderer/downloadable.phtml
 @@ -55,7 +55,7 @@
@@ -1136,7 +1135,7 @@ index 37639169c1b..60d0bcc90c9 100644
                      <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
                  <?php endforeach; ?>
 diff --git app/design/frontend/default/iphone/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml app/design/frontend/default/iphone/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml
-index 90a078f1b1f..c5e246ae327 100644
+index a9657a035d4..b591ca1ea43 100644
 --- app/design/frontend/default/iphone/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml
 +++ app/design/frontend/default/iphone/template/downloadable/sales/order/invoice/items/renderer/downloadable.phtml
 @@ -56,7 +56,7 @@
@@ -1149,10 +1148,10 @@ index 90a078f1b1f..c5e246ae327 100644
                      <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
                  <?php endforeach; ?>
 diff --git app/design/frontend/default/iphone/template/downloadable/sales/order/items/renderer/downloadable.phtml app/design/frontend/default/iphone/template/downloadable/sales/order/items/renderer/downloadable.phtml
-index 59d8f101fcf..c0ac8b69fce 100644
+index 99da2191ef7..75947b5cef3 100644
 --- app/design/frontend/default/iphone/template/downloadable/sales/order/items/renderer/downloadable.phtml
 +++ app/design/frontend/default/iphone/template/downloadable/sales/order/items/renderer/downloadable.phtml
-@@ -59,7 +59,7 @@ $links = $this->getLinks();
+@@ -59,7 +59,7 @@
          <!-- downloadable -->
          <?php if ($links): ?>
              <dl class="item-options">
@@ -1161,115 +1160,11 @@ index 59d8f101fcf..c0ac8b69fce 100644
                  <?php foreach ($links->getPurchasedItems() as $link): ?>
                      <dd><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
                  <?php endforeach; ?>
-diff --git app/design/frontend/rwd/default/template/bundle/email/order/items/creditmemo/default.phtml app/design/frontend/rwd/default/template/bundle/email/order/items/creditmemo/default.phtml
-index 3953e39a00a..3151c06691f 100644
---- app/design/frontend/rwd/default/template/bundle/email/order/items/creditmemo/default.phtml
-+++ app/design/frontend/rwd/default/template/bundle/email/order/items/creditmemo/default.phtml
-@@ -43,7 +43,7 @@
-     <?php $attributes = $this->getSelectionAttributes($_item) ?>
-     <?php if ($_prevOptionId != $attributes['option_id']): ?>
-     <tr>
--        <td class="bundle-item"><strong><em><?php echo $attributes['option_label'] ?></em></strong></td>
-+        <td class="bundle-item"><strong><em><?php echo $this->escapeHtml($attributes['option_label']); ?></em></strong></td>
-         <td class="bundle-item">&nbsp;</td>
-         <td class="bundle-item">&nbsp;</td>
-     </tr>
-diff --git app/design/frontend/rwd/default/template/bundle/email/order/items/invoice/default.phtml app/design/frontend/rwd/default/template/bundle/email/order/items/invoice/default.phtml
-index 94a4c19d555..3f2def3a3c6 100644
---- app/design/frontend/rwd/default/template/bundle/email/order/items/invoice/default.phtml
-+++ app/design/frontend/rwd/default/template/bundle/email/order/items/invoice/default.phtml
-@@ -44,7 +44,7 @@
-     <?php $attributes = $this->getSelectionAttributes($_item) ?>
-     <?php if ($_prevOptionId != $attributes['option_id']): ?>
-     <tr>
--        <td class="bundle-item"><strong><em><?php echo $attributes['option_label'] ?></em></strong></td>
-+        <td class="bundle-item"><strong><em><?php echo $this->escapeHtml($attributes['option_label']); ?></em></strong></td>
-         <td class="bundle-item">&nbsp;</td>
-         <td class="bundle-item">&nbsp;</td>
-     </tr>
-diff --git app/design/frontend/rwd/default/template/bundle/email/order/items/order/default.phtml app/design/frontend/rwd/default/template/bundle/email/order/items/order/default.phtml
-index 32d7cd5f135..71c3093169d 100644
---- app/design/frontend/rwd/default/template/bundle/email/order/items/order/default.phtml
-+++ app/design/frontend/rwd/default/template/bundle/email/order/items/order/default.phtml
-@@ -44,7 +44,7 @@
-     <?php $attributes = $this->getSelectionAttributes($_item) ?>
-     <?php if ($_prevOptionId != $attributes['option_id']): ?>
-     <tr>
--        <td class="bundle-item"><strong><em><?php echo $attributes['option_label'] ?></em></strong></td>
-+        <td class="bundle-item"><strong><em><?php echo $this->escapeHtml($attributes['option_label']); ?></em></strong></td>
-         <td class="bundle-item">&nbsp;</td>
-         <td class="bundle-item">&nbsp;</td>
-     </tr>
-diff --git app/design/frontend/rwd/default/template/bundle/email/order/items/shipment/default.phtml app/design/frontend/rwd/default/template/bundle/email/order/items/shipment/default.phtml
-index 6b0e520ddb3..e8284867a27 100644
---- app/design/frontend/rwd/default/template/bundle/email/order/items/shipment/default.phtml
-+++ app/design/frontend/rwd/default/template/bundle/email/order/items/shipment/default.phtml
-@@ -43,7 +43,7 @@
-     <?php $attributes = $this->getSelectionAttributes($_item) ?>
-     <?php if ($_prevOptionId != $attributes['option_id']): ?>
-     <tr>
--        <td class="bundle-item"><strong><em><?php echo $attributes['option_label'] ?></em></strong></td>
-+        <td class="bundle-item"><strong><em><?php echo $this->escapeHtml($attributes['option_label']); ?></em></strong></td>
-         <td class="bundle-item">&nbsp;</td>
-         <td class="bundle-item">&nbsp;</td>
-     </tr>
-diff --git app/design/frontend/rwd/default/template/bundle/sales/order/items/renderer.phtml app/design/frontend/rwd/default/template/bundle/sales/order/items/renderer.phtml
-index 0498bca7562..9aa46b17c83 100644
---- app/design/frontend/rwd/default/template/bundle/sales/order/items/renderer.phtml
-+++ app/design/frontend/rwd/default/template/bundle/sales/order/items/renderer.phtml
-@@ -43,7 +43,7 @@
-     <?php $attributes = $this->getSelectionAttributes($_item) ?>
-     <?php if ($_prevOptionId != $attributes['option_id']): ?>
-     <tr class="bundle label<?php if($_item->getLastRow()): ?> last<?php endif; ?>">
--        <td><div class="option-label"><?php echo $attributes['option_label'] ?></div></td>
-+        <td><div class="option-label"><?php echo $this->escapeHtml($attributes['option_label']); ?></div></td>
-         <td data-rwd-label="SKU" class="lin-hide">&nbsp;</td>
-         <td data-rwd-label="Price" class="lin-hide">&nbsp;</td>
-         <td data-rwd-label="Qty" class="lin-hide">&nbsp;</td>
-diff --git app/design/frontend/rwd/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml app/design/frontend/rwd/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml
-index 8787b7dfac2..498dd9b6e90 100644
---- app/design/frontend/rwd/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml
-+++ app/design/frontend/rwd/default/template/downloadable/email/order/items/creditmemo/downloadable.phtml
-@@ -40,7 +40,7 @@
-         <?php endif; ?>
-         <?php if ($links = $this->getLinks()->getPurchasedItems()): ?>
-             <dl style="margin:0; padding:0;">
--                <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
-+                <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
-                 <?php foreach ($links as $link): ?>
-                     <dd style="margin:0; padding:0 0 0 9px;"><?php echo $this->escapeHtml($link->getLinkTitle()); ?></dd>
-                 <?php endforeach; ?>
-diff --git app/design/frontend/rwd/default/template/downloadable/email/order/items/invoice/downloadable.phtml app/design/frontend/rwd/default/template/downloadable/email/order/items/invoice/downloadable.phtml
-index 8b7c2d2cb88..ffe955dc368 100644
---- app/design/frontend/rwd/default/template/downloadable/email/order/items/invoice/downloadable.phtml
-+++ app/design/frontend/rwd/default/template/downloadable/email/order/items/invoice/downloadable.phtml
-@@ -43,7 +43,7 @@
-         <?php endif; ?>
-         <?php if ($links = $this->getLinks()->getPurchasedItems()): ?>
-             <dl style="margin:0; padding:0;">
--                <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
-+                <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
-                 <?php foreach ($links as $link): ?>
-                     <dd style="margin:0; padding:0 0 0 9px;">
-                         <?php echo $this->escapeHtml($link->getLinkTitle()); ?>&nbsp;
-diff --git app/design/frontend/rwd/default/template/downloadable/email/order/items/order/downloadable.phtml app/design/frontend/rwd/default/template/downloadable/email/order/items/order/downloadable.phtml
-index 361fb37192f..c3976e81632 100644
---- app/design/frontend/rwd/default/template/downloadable/email/order/items/order/downloadable.phtml
-+++ app/design/frontend/rwd/default/template/downloadable/email/order/items/order/downloadable.phtml
-@@ -40,7 +40,7 @@
-         <?php endif; ?>
-         <?php if ($links = $this->getLinks()->getPurchasedItems()): ?>
-             <dl style="margin:0; padding:0;">
--                <dt><strong><em><?php echo $this->getLinksTitle() ?></em></strong></dt>
-+                <dt><strong><em><?php echo $this->escapeHtml($this->getLinksTitle()); ?></em></strong></dt>
-                 <?php foreach ($links as $link): ?>
-                     <dd style="margin:0; padding:0 0 0 9px;">
-                         <?php echo $this->escapeHtml($link->getLinkTitle()); ?>&nbsp;
 diff --git app/locale/en_US/Mage_Adminhtml.csv app/locale/en_US/Mage_Adminhtml.csv
-index b1b202905ef..5d209688a8e 100644
+index 43eee8af13f..9c3d4cd30d8 100644
 --- app/locale/en_US/Mage_Adminhtml.csv
 +++ app/locale/en_US/Mage_Adminhtml.csv
-@@ -1253,6 +1253,7 @@
+@@ -1150,6 +1150,7 @@
  "Yes (302 Found)","Yes (302 Found)"
  "Yes (only price with tax)","Yes (only price with tax)"
  "You cannot delete your own account.","You cannot delete your own account."
@@ -1278,10 +1173,10 @@ index b1b202905ef..5d209688a8e 100644
  "You have %s unread message(s). <a href=""%s"">Go to messages inbox</a>.","You have %s unread message(s). <a href=""%s"">Go to messages inbox</a>."
  "You have %s, %s and %s unread messages. <a href=""%s"">Go to messages inbox</a>.","You have %s, %s and %s unread messages. <a href=""%s"">Go to messages inbox</a>."
 diff --git app/locale/en_US/Mage_Customer.csv app/locale/en_US/Mage_Customer.csv
-index 907404d7fe1..7bda0a68a69 100644
+index 933ed3c1a9e..e0cb8b54fce 100644
 --- app/locale/en_US/Mage_Customer.csv
 +++ app/locale/en_US/Mage_Customer.csv
-@@ -194,6 +194,7 @@
+@@ -187,6 +187,7 @@
  "Invalid email address.","Invalid email address."
  "Invalid login or password.","Invalid login or password."
  "Invalid password reset token.","Invalid password reset token."
@@ -1290,24 +1185,24 @@ index 907404d7fe1..7bda0a68a69 100644
  "Invalid store specified, skipping the record.","Invalid store specified, skipping the record."
  "Invalid website, skipping the record, line: %s","Invalid website, skipping the record, line: %s"
 diff --git app/locale/en_US/template/email/account_password_reset_confirmation.html app/locale/en_US/template/email/account_password_reset_confirmation.html
-index 6ff64ea2fa5..2f5b446700a 100644
+index c0580029cc4..096d132f3bc 100644
 --- app/locale/en_US/template/email/account_password_reset_confirmation.html
 +++ app/locale/en_US/template/email/account_password_reset_confirmation.html
-@@ -22,7 +22,7 @@
-             <table cellspacing="0" cellpadding="0" class="action-button" >
-                 <tr>
-                     <td>
--                        <a href="{{store url="customer/account/resetpassword/" _query_id=$customer.id _query_token=$customer.rp_token}}"><span>Reset Password</span></a>
-+                        <a href="{{store url="customer/account/resetpassword/" _query_id=$customer.rp_customer_id _query_token=$customer.rp_token}}"><span>Reset Password</span></a>
-                     </td>
-                 </tr>
-             </table>
+@@ -26,7 +26,7 @@ body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;
+                             <td valign="top">
+                                 <h1 style="font-size: 22px; font-weight: normal; line-height: 22px; margin: 0 0 11px 0;">Dear {{htmlescape var=$customer.name}},</h1>
+                                 <p style="font-size: 12px; line-height: 16px; margin: 0 0 8px 0;">There was recently a request to change the password for your account.</p>
+-                                <p style="font-size: 12px; line-height: 16px; margin: 0;">If you requested this password change, please click on the following link to reset your password: <a href="{{store url="customer/account/resetpassword/" _query_id=$customer.id _query_token=$customer.rp_token}}" style="color:#1E7EC8;">{{store url="customer/account/resetpassword/" _query_id=$customer.id _query_token=$customer.rp_token}}</a></p>
++                                <p style="font-size: 12px; line-height: 16px; margin: 0;">If you requested this password change, please click on the following link to reset your password: <a href="{{store url="customer/account/resetpassword/" _query_id=$customer.rp_customer_id _query_token=$customer.rp_token}}"><span>Reset Password</span></a></p>
+                                 <p style="font-size: 12px; line-height: 16px; margin: 0;">If clicking the link does not work, please copy and paste the URL into your browser instead.</p>
+                                 <br />
+                                 <p style="font-size:12px; line-height:16px; margin:0;">If you did not make this request, you can ignore this message and your password will remain the same.</p>
 diff --git app/locale/en_US/template/email/admin_new_user_notification.html app/locale/en_US/template/email/admin_new_user_notification.html
 new file mode 100644
-index 00000000000..87c722e68e5
+index 00000000000..adac7395637
 --- /dev/null
 +++ app/locale/en_US/template/email/admin_new_user_notification.html
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,36 @@
 +<!--@subject New Admin Account {{var user.name}} Created. @-->
 +<!--@vars
 +{"store url=\"\"":"Store Url",
@@ -1317,27 +1212,38 @@ index 00000000000..87c722e68e5
 +@-->
 +
 +<!--@styles
++body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
 +@-->
 +
-+{{template config_path="design/email/header"}}
-+{{inlinecss file="email-inline.css"}}
-+
-+<table cellpadding="0" cellspacing="0" border="0">
-+    <tr>
-+        <td class="action-content">
-+            <h1>New admin account notification.</h1>
-+            <p>A new admin account was created for <b>{{htmlescape var=$user.name}}</b> using email: {{htmlescape var=$user.email}}.</p>
-+            <p>If you have not requested this action, please review the list of administrator accounts in <a href="{{store url=""}}">your store</a>.</p>
-+        </td>
-+    </tr>
-+</table>
-+
-+{{template config_path="design/email/footer"}}
++<body style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
++<div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
++    <table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
++        <tr>
++            <td align="center" valign="top" style="padding:20px 0 20px 0">
++                <!-- [ header starts here] -->
++                <table bgcolor="FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
++                    <!-- [ middle starts here] -->
++                    <tr>
++                        <td valign="top">
++                            <h1>New admin account notification.</h1>
++                            <p>A new admin account was created for <b>{{htmlescape var=$user.name}}</b> using email: {{htmlescape var=$user.email}}.</p>
++                            <p>If you have not requested this action, please review the list of administrator accounts in <a href="{{store url=""}}">your store</a>.</p>
++                        </td>
++                    </tr>
++                    <tr>
++                        <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;"><center><p style="font-size:12px; margin:0;">Thank you again, <strong>{{var store.getFrontendName()}}</strong></p></center></td>
++                    </tr>
++                </table>
++            </td>
++        </tr>
++    </table>
++</div>
++</body>
 diff --git downloader/Maged/Controller.php downloader/Maged/Controller.php
-index b9af4989b99..180d70f0a5a 100644
+index 7dd056c4c32..2a084f09c61 100755
 --- downloader/Maged/Controller.php
 +++ downloader/Maged/Controller.php
-@@ -813,6 +813,18 @@ final class Maged_Controller
+@@ -775,6 +775,18 @@ final class Maged_Controller
       */
      public function dispatch()
      {
@@ -1355,31 +1261,22 @@ index b9af4989b99..180d70f0a5a 100644
 +
          header('Content-type: text/html; charset=UTF-8');
  
-         $this->_addDomainPolicyHeader();
+         $this->setAction();
 diff --git skin/adminhtml/default/enterprise/images/placeholder/thumbnail.jpg skin/adminhtml/default/enterprise/images/placeholder/thumbnail.jpg
 new file mode 100644
-index 0000000000000000000000000000000000000000..4537aa80b31904bd348d03240a3aad0fc1e531b6
-GIT binary patch
-literal 1110
-zcmex=<NpH&0WUXCHwH#VMg|WcWcYuZ!I^=Xi3x;&fCY$HIapa)SXjB(+1WUFxOjND
-zxwyG``Gf>``2_j6xdp@o1cgOJMMZh|#U;c<B!omnML>oyG6VInuyV4pa*FVB^NNrR
-z{vTiv<Y4e-NMUAFVqg+vWEN!ne}qAvfq{_~=vt72p@5MI=teen4o)s^pn|Oe3`~s7
-z%uFoIAXfub*8=4kSOi&x6b&8OgaZ@Vl?p|S8YeE~P<GmQP&DY`2NmO_q9#r*F>wh=
-zDOELf4NWZ*Q!{f5ODks=S2uSLPp{yR(6I1`$f)F$)U@=B%&g*)(z5c3%Btp;*0%PJ
-z&aO$5r%atTea6gLixw|gx@`H1m8&*w-m-Pu_8mKS9XfpE=&|D`PM*4S`O4L6*Kgds
-z_3+W-Cr_U}fAR9w$4{TXeEs(Q$Io9Ne=#yJL%ap|8JfQYf&OA*VPR%r2l<PUsT_!z
-z1zA`X4cUYo1KAS`g_VpNIYgW$F5GyKQ`tD^gJ@FGMJ_QFlZUDwL0$v<j5v=qk>xYE
-z#}NLy#lXYN2#h>tK?Zw<zYdGKG#Eg5!2~vcriHU!Dn5R1zF<|*xzBP{^(6spO<t4I
-zvzfbUQ$;g6Y!<%BI%B?<W&ZaI3%I8QF-fGzbVV^}Eb4+|&I4xyW_?`p&@S}r`|#QC
-z<}Xb<v~a0|n_C7$8~cn82K(=sR!OI{FF0K_D>6mEeUilshE*Hy*j(qF+<M;8K|GSV
-z$Kb@O;z-ex{S#l_Te>G{;>zIWU6by;Kcgs7b8k_Dmb><W3X897>u;Y^4=QZ3>gxLG
-zb~LAWPTFMu-|K$_u<p`W)W8MBg8N?n3M<|J>&3sVi|&{F)wa6-x1>IbVQclj<sU`E
-z?*FZ-&AR&j*Zd=)(e+<neqF$Ae*e|<zpvKk{@ZJ}|I(WH`c?7YSMA;Y>&vhI3|<Ty
-zYyYjRzqjm0?e#yJ*TD*N+wayNYS6vtD#8#5#Vsj<Az^nP&NVXH`AX}r2xHv$zy6Q3
-z*6s(IarJgb&&9Xw?3T|~@LurZ=5sv9%MiWqKSRj=_o3DKK>Pnqc|CigQNw};zM{-)
-z+urYu`Lm$7*+J-@wv|SJ=iOV=t}%1XJwEwH$d>>{R}oa~TXD_xFi%&h2qRC}O2PB@
-R?3Qo!MRFC;b&UUS0s!NOuyz0d
-
-literal 0
-HcmV?d00001
-
+index 00000000000..4537aa80b31
+--- /dev/null
++++ skin/adminhtml/default/enterprise/images/placeholder/thumbnail.jpg
+@@ -0,0 +1,11 @@
++ˇÿˇ‡ JFIF  H H  ˇ€ C 
++
++
++ˇ€ C		ˇ¿  K d" ˇƒ           	
++ˇƒ µ   } !1AQa"q2Åë°#B±¡R—$3brÇ	
++%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyzÉÑÖÜáàâäíìîïñóòôö¢£§•¶ß®©™≤≥¥µ∂∑∏π∫¬√ƒ≈∆«»… “”‘’÷◊ÿŸ⁄·‚„‰ÂÊÁËÈÍÒÚÛÙıˆ˜¯˘˙ˇƒ        	
++ˇƒ µ  w !1AQaq"2ÅBë°±¡	#3Rbr—
++$4·%Ò&'()*56789:CDEFGHIJSTUVWXYZcdefghijstuvwxyzÇÉÑÖÜáàâäíìîïñóòôö¢£§•¶ß®©™≤≥¥µ∂∑∏π∫¬√ƒ≈∆«»… “”‘’÷◊ÿŸ⁄‚„‰ÂÊÁËÈÍÚÛÙıˆ˜¯˘˙ˇ⁄   ? ˝@¢ä( ¢ä( †êO°öÈ!„Ô7†™RŒÛztPÇJígkä}ehà<°ÏjÃ7Ωü˜–†îRdäZ (¢ä (¢ä (¢ä 	¿ÕPöÒ§·>UıÔWõÓü•f¬°•@FFh Üò0øﬁ5zdá†ÀzöYdGí8Ë ™±‹<◊	ìÖœA@Yå0»™sY…èëÈﬁ•ºbë©SÉ∫íﬁÔÃ!|ﬁ¢Ä*G+¿x8ıØ€Œ'RqÇ:ää˘F≈lsúfìO˚Ø¯P∫(¢Ä
++(¢Ä
++(¢ÄæÈ˙Vuø˙Ë˛µ¢ﬂt˝+:ﬂ˝tZ µ{˛ßÒVﬂ˝z}j’Ô˙üƒU[ıÈı†7ﬂÍó˝ÍØm˛Ω>ø“¨_™_˜™Ω∑˙Ù˙ˇ J ±}˛©ﬁ¶ÿ}◊¸)◊ﬂÍó˝Ímá›¬Ä-—E QE QE ÑdTV›·ù22πÍ*˝^˜˝O‚*≠ø˙Ù˙’€àå—Ì9Ê®–JAŒ [æˇ TøÔU{oıÈı˛îÎõë2Ä†Äri÷∂ÔΩ\¸†sÉ@ﬁ+:(PI›⁄ñ÷
++ù«ìÿTÙPEPEPEPEPMx÷E√äuV©œﬁ>ßµME QE QE QEˇŸ
+\ No newline at end of file
