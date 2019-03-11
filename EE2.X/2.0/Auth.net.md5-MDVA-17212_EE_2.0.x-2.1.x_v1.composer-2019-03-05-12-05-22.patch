@@ -1,0 +1,328 @@
+diff --git a/vendor/magento/module-authorizenet/Model/Directpost.php b/vendor/magento/module-authorizenet/Model/Directpost.php
+index 07e5f40632d7..c96e9a62c07c 100644
+--- a/vendor/magento/module-authorizenet/Model/Directpost.php
++++ b/vendor/magento/module-authorizenet/Model/Directpost.php
+@@ -549,16 +549,16 @@ public function setResponseData(array $postData)
+     public function validateResponse()
+     {
+         $response = $this->getResponse();
+-        //md5 check
+-        if (
+-            !$this->getConfigData('trans_md5')
+-            || !$this->getConfigData('login')
+-            || !$response->isValidHash($this->getConfigData('trans_md5'), $this->getConfigData('login'))
++        $hashConfigKey = !empty($response->getData('x_SHA2_Hash')) ? 'signature_key' : 'trans_md5';
++
++        //hash check
++        if (!$response->isValidHash($this->getConfigData($hashConfigKey), $this->getConfigData('login'))
+         ) {
+             throw new \Magento\Framework\Exception\LocalizedException(
+                 __('The transaction was declined because the response hash validation failed.')
+             );
+         }
++
+         return true;
+     }
+ 
+diff --git a/vendor/magento/module-authorizenet/Model/Directpost/Request.php b/vendor/magento/module-authorizenet/Model/Directpost/Request.php
+index d9a403e5c991..08d37780937f 100644
+--- a/vendor/magento/module-authorizenet/Model/Directpost/Request.php
++++ b/vendor/magento/module-authorizenet/Model/Directpost/Request.php
+@@ -7,6 +7,7 @@
+ namespace Magento\Authorizenet\Model\Directpost;
+ 
+ use Magento\Authorizenet\Model\Request as AuthorizenetRequest;
++use Magento\Framework\Intl\DateTimeFactory;
+ 
+ /**
+  * Authorize.net request model for DirectPost model
+@@ -18,9 +19,33 @@ class Request extends AuthorizenetRequest
+      */
+     protected $_transKey = null;
+ 
++    /**
++     * Hexadecimal signature key.
++     *
++     * @var string
++     */
++    private $signatureKey = '';
++
++    /**
++     * @var DateTimeFactory
++     */
++    private $dateTimeFactory;
++
++    /**
++     * @param DateTimeFactory $dateTimeFactory
++     * @param array $data
++     */
++    public function __construct(
++        DateTimeFactory $dateTimeFactory,
++        array $data = []
++    ) {
++        $this->dateTimeFactory = $dateTimeFactory;
++        parent::__construct($data);
++    }
++
+     /**
+      * Return merchant transaction key.
+-     * Needed to generate sign.
++     * Needed to generate MD5 sign.
+      *
+      * @return string
+      */
+@@ -31,7 +56,7 @@ protected function _getTransactionKey()
+ 
+     /**
+      * Set merchant transaction key.
+-     * Needed to generate sign.
++     * Needed to generate MD5 sign.
+      *
+      * @param string $transKey
+      * @return $this
+@@ -43,7 +68,7 @@ protected function _setTransactionKey($transKey)
+     }
+ 
+     /**
+-     * Generates the fingerprint for request.
++     * Generates the MD5 fingerprint for request.
+      *
+      * @param string $merchantApiLoginId
+      * @param string $merchantTransactionKey
+@@ -63,7 +88,7 @@ public function generateRequestSign(
+     ) {
+         return hash_hmac(
+             "md5",
+-            $merchantApiLoginId . "^" . $fpSequence . "^" . $fpTimestamp . "^" . $amount . "^" . $currencyCode,
++            $merchantApiLoginId . '^' . $fpSequence . '^' . $fpTimestamp . '^' . $amount . '^' . $currencyCode,
+             $merchantTransactionKey
+         );
+     }
+@@ -85,6 +110,7 @@ public function setConstantData(\Magento\Authorizenet\Model\Directpost $paymentM
+             ->setXRelayUrl($paymentMethod->getRelayUrl());
+ 
+         $this->_setTransactionKey($paymentMethod->getConfigData('trans_key'));
++        $this->setSignatureKey($paymentMethod->getConfigData('signature_key'));
+         return $this;
+     }
+ 
+@@ -168,17 +194,81 @@ public function setDataFromOrder(
+      */
+     public function signRequestData()
+     {
+-        $fpTimestamp = time();
+-        $hash = $this->generateRequestSign(
+-            $this->getXLogin(),
+-            $this->_getTransactionKey(),
+-            $this->getXAmount(),
+-            $this->getXCurrencyCode(),
+-            $this->getXFpSequence(),
+-            $fpTimestamp
+-        );
++        $fpDate = $this->dateTimeFactory->create('now', new \DateTimeZone('UTC'));
++        $fpTimestamp = $fpDate->getTimestamp();
++
++        if (!empty($this->getSignatureKey())) {
++            $hash = $this->generateSha2RequestSign(
++                $this->getXLogin(),
++                $this->getSignatureKey(),
++                $this->getXAmount(),
++                $this->getXCurrencyCode(),
++                $this->getXFpSequence(),
++                $fpTimestamp
++            );
++        } else {
++            $hash = $this->generateRequestSign(
++                $this->getXLogin(),
++                $this->_getTransactionKey(),
++                $this->getXAmount(),
++                $this->getXCurrencyCode(),
++                $this->getXFpSequence(),
++                $fpTimestamp
++            );
++        }
++
+         $this->setXFpTimestamp($fpTimestamp);
+         $this->setXFpHash($hash);
++
+         return $this;
+     }
++
++    /**
++     * Generates the SHA2 fingerprint for request.
++     *
++     * @param string $merchantApiLoginId
++     * @param string $merchantSignatureKey
++     * @param string $amount
++     * @param string $currencyCode
++     * @param string $fpSequence An invoice number or random number.
++     * @param string $fpTimestamp
++     * @return string The fingerprint.
++     */
++    private function generateSha2RequestSign(
++        $merchantApiLoginId,
++        $merchantSignatureKey,
++        $amount,
++        $currencyCode,
++        $fpSequence,
++        $fpTimestamp
++    ) {
++        $message = $merchantApiLoginId . '^' . $fpSequence . '^' . $fpTimestamp . '^' . $amount . '^' . $currencyCode;
++
++        return strtoupper(hash_hmac('sha512', $message, pack('H*', $merchantSignatureKey)));
++    }
++
++    /**
++     * Return merchant hexadecimal signature key.
++     *
++     * Needed to generate SHA2 sign.
++     *
++     * @return string
++     */
++    private function getSignatureKey()
++    {
++        return $this->signatureKey;
++    }
++
++    /**
++     * Set merchant hexadecimal signature key.
++     *
++     * Needed to generate SHA2 sign.
++     *
++     * @param string $signatureKey
++     * @return void
++     */
++    private function setSignatureKey($signatureKey)
++    {
++        $this->signatureKey = $signatureKey;
++    }
+ }
+diff --git a/vendor/magento/module-authorizenet/Model/Directpost/Response.php b/vendor/magento/module-authorizenet/Model/Directpost/Response.php
+index dc62c1e990dc..73be0a3dce25 100644
+--- a/vendor/magento/module-authorizenet/Model/Directpost/Response.php
++++ b/vendor/magento/module-authorizenet/Model/Directpost/Response.php
+@@ -24,25 +24,31 @@ class Response extends AuthorizenetResponse
+      */
+     public function generateHash($merchantMd5, $merchantApiLogin, $amount, $transactionId)
+     {
+-        if (!$amount) {
+-            $amount = '0.00';
+-        }
+-
+         return strtoupper(md5($merchantMd5 . $merchantApiLogin . $transactionId . $amount));
+     }
+ 
+     /**
+      * Return if is valid order id.
+      *
+-     * @param string $merchantMd5
++     * @param string $storedHash
+      * @param string $merchantApiLogin
+      * @return bool
+      */
+-    public function isValidHash($merchantMd5, $merchantApiLogin)
++    public function isValidHash($storedHash, $merchantApiLogin)
+     {
+-        $hash = $this->generateHash($merchantMd5, $merchantApiLogin, $this->getXAmount(), $this->getXTransId());
++        if (empty($this->getData('x_amount'))) {
++            $this->setData('x_amount', '0.00');
++        }
+ 
+-        return Security::compareStrings($hash, $this->getData('x_MD5_Hash'));
++        if (!empty($this->getData('x_SHA2_Hash'))) {
++            $hash = $this->generateSha2Hash($storedHash);
++            return Security::compareStrings($hash, $this->getData('x_SHA2_Hash'));
++        } elseif (!empty($this->getData('x_MD5_Hash'))) {
++            $hash = $this->generateHash($storedHash, $merchantApiLogin, $this->getXAmount(), $this->getXTransId());
++            return Security::compareStrings($hash, $this->getData('x_MD5_Hash'));
++        }
++
++        return false;
+     }
+ 
+     /**
+@@ -54,4 +60,57 @@ public function isApproved()
+     {
+         return $this->getXResponseCode() == \Magento\Authorizenet\Model\Directpost::RESPONSE_CODE_APPROVED;
+     }
++
++    /**
++     * Generates an SHA2 hash to compare against AuthNet's.
++     *
++     * @param string $signatureKey
++     * @return string
++     * @see https://support.authorize.net/s/article/MD5-Hash-End-of-Life-Signature-Key-Replacement
++     */
++    private function generateSha2Hash($signatureKey)
++    {
++        $hashFields = [
++            'x_trans_id',
++            'x_test_request',
++            'x_response_code',
++            'x_auth_code',
++            'x_cvv2_resp_code',
++            'x_cavv_response',
++            'x_avs_code',
++            'x_method',
++            'x_account_number',
++            'x_amount',
++            'x_company',
++            'x_first_name',
++            'x_last_name',
++            'x_address',
++            'x_city',
++            'x_state',
++            'x_zip',
++            'x_country',
++            'x_phone',
++            'x_fax',
++            'x_email',
++            'x_ship_to_company',
++            'x_ship_to_first_name',
++            'x_ship_to_last_name',
++            'x_ship_to_address',
++            'x_ship_to_city',
++            'x_ship_to_state',
++            'x_ship_to_zip',
++            'x_ship_to_country',
++            'x_invoice_num',
++        ];
++
++        $message = '^';
++        foreach ($hashFields as $field) {
++            if (!empty($this->getData($field))) {
++                $message .= $this->getData($field);
++            }
++            $message .= '^';
++        }
++
++        return strtoupper(hash_hmac('sha512', $message, pack('H*', $signatureKey)));
++    }
+ }
+diff --git a/vendor/magento/module-authorizenet/etc/adminhtml/system.xml b/vendor/magento/module-authorizenet/etc/adminhtml/system.xml
+index 1319fa102d0d..d6a935020a6d 100644
+--- a/vendor/magento/module-authorizenet/etc/adminhtml/system.xml
++++ b/vendor/magento/module-authorizenet/etc/adminhtml/system.xml
+@@ -29,6 +29,10 @@
+                     <label>Transaction Key</label>
+                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                 </field>
++                <field id="signature_key" translate="label" type="obscure" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="0">
++                    <label>Signature Key</label>
++                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
++                </field>
+                 <field id="trans_md5" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                     <label>Merchant MD5</label>
+                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+diff --git a/vendor/magento/module-authorizenet/etc/config.xml b/vendor/magento/module-authorizenet/etc/config.xml
+index eacf77cda1e7..d02b87b30e32 100644
+--- a/vendor/magento/module-authorizenet/etc/config.xml
++++ b/vendor/magento/module-authorizenet/etc/config.xml
+@@ -22,6 +22,7 @@
+                 <title>Credit Card Direct Post (Authorize.net)</title>
+                 <trans_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                 <trans_md5 backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
++                <signature_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                 <allowspecific>0</allowspecific>
+                 <currency>USD</currency>
+                 <create_order_before>1</create_order_before>
