@@ -1,0 +1,16 @@
+Index: vendor/magento/framework/DB/Adapter/Pdo/Mysql.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- vendor/magento/framework/DB/Adapter/Pdo/Mysql.php	(revision 6a8701ca9402697f5eaf022e35b9217d3281546c)
++++ vendor/magento/framework/DB/Adapter/Pdo/Mysql.php	(date 1553502112000)
+@@ -2796,7 +2796,7 @@
+                 if (isset($condition['to'])) {
+                     $query .= empty($query) ? '' : ' AND ';
+                     $to     = $this->_prepareSqlDateCondition($condition, 'to');
+-                    $query = $this->_prepareQuotedSqlCondition($query . $conditionKeyMap['to'], $to, $fieldName);
++                    $query = $query . $this->_prepareQuotedSqlCondition($conditionKeyMap['to'], $to, $fieldName);
+                 }
+             } elseif (array_key_exists($key, $conditionKeyMap)) {
+                 $value = $condition[$key];
