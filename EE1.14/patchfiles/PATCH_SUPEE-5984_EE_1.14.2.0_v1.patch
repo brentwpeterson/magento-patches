@@ -1,0 +1,179 @@
+diff --git app/code/community/OnTap/Merchandiser/Model/Adminhtml/Observer.php app/code/community/OnTap/Merchandiser/Model/Adminhtml/Observer.php
+index 847ab86..19562d4 100644
+--- app/code/community/OnTap/Merchandiser/Model/Adminhtml/Observer.php
++++ app/code/community/OnTap/Merchandiser/Model/Adminhtml/Observer.php
+@@ -94,9 +94,6 @@ class OnTap_Merchandiser_Model_Adminhtml_Observer
+         $positionsArray = $productPositions;
+         asort($productPositions);
+         $productPositions = array_keys($productPositions);
+-        if ($post['merchandiser']['ruled_only'] == 1) {
+-            $productPositions = array();
+-        }
+ 
+         $insertValues = array();
+         $attributeCodes = array();
+diff --git app/code/community/OnTap/Merchandiser/Model/Resource/Merchandiser.php app/code/community/OnTap/Merchandiser/Model/Resource/Merchandiser.php
+index 5c337df..006d197 100644
+--- app/code/community/OnTap/Merchandiser/Model/Resource/Merchandiser.php
++++ app/code/community/OnTap/Merchandiser/Model/Resource/Merchandiser.php
+@@ -76,19 +76,33 @@ class OnTap_Merchandiser_Model_Resource_Merchandiser extends Mage_Catalog_Model_
+     }
+ 
+     /**
+-     * insertMultipleProductsToCategory
++     * Assign products to categories at specified positions, skipping non-existing products/categories
+      *
+-     * @param mixed $insertData
++     * @param array $insertData
+      * @return void
+      */
+     public function insertMultipleProductsToCategory($insertData)
+     {
+         $write = $this->_getWriteAdapter();
++
++        // Attempt to insert all rows at once, assuming that referential integrity is maintained
+         try {
+             $write->insertMultiple($this->catalogCategoryProduct, $insertData);
++            return;
+         } catch (Exception $e) {
+-            Mage::log($e->getMessage());
++            // Fall back to per-row insertion, because even one erroneous row fails entire batch
++        }
++
++        // Insert rows one by one, skipping erroneous ones and logging encountered errors
++        $write->beginTransaction();
++        foreach ($insertData as $insertRow) {
++            try {
++                $write->insert($this->catalogCategoryProduct, $insertRow);
++            } catch (Exception $e) {
++                Mage::log($e->getMessage());
++            }
+         }
++        $write->commit();
+     }
+ 
+     /**
+diff --git app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh.php app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh.php
+index a98a5ee..5b7e2d3 100644
+--- app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh.php
++++ app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh.php
+@@ -81,13 +81,6 @@ class Enterprise_Catalog_Model_Index_Action_Product_Flat_Refresh extends Enterpr
+     protected $_storeId = 0;
+ 
+     /**
+-     * Calls amount during current session
+-     *
+-     * @var int
+-     */
+-    protected static $_calls = 0;
+-
+-    /**
+      * Product helper, contains some useful functions for operations with attributes
+      *
+      * @var Enterprise_Catalog_Helper_Product
+@@ -745,12 +738,11 @@ class Enterprise_Catalog_Model_Index_Action_Product_Flat_Refresh extends Enterpr
+      *
+      * @param int $storeId
+      * @param array $changedIds
+-     * @param bool $resetFlag
+      *
+      * @return Enterprise_Catalog_Model_Index_Action_Product_Flat_Refresh
+      * @throws Exception
+      */
+-    protected function _reindex($storeId, array $changedIds = array(), $resetFlag = false)
++    protected function _reindex($storeId, array $changedIds = array())
+     {
+         $this->_storeId     = $storeId;
+         $entityTableName    = $this->_productHelper->getTable('catalog/product');
+@@ -761,39 +753,37 @@ class Enterprise_Catalog_Model_Index_Action_Product_Flat_Refresh extends Enterpr
+ 
+         try {
+             //We should prepare temp. tables only for first call of reindex all
+-            if (!self::$_calls && !$resetFlag) {
+-                $temporaryEavAttributes = $eavAttributes;
+-
+-                //add status global value to the base table
+-                /* @var $status Mage_Eav_Model_Entity_Attribute */
+-                $status = $this->_productHelper->getAttribute('status');
+-                $temporaryEavAttributes[$status->getBackendTable()]['status'] = $status;
+-                //Create list of temporary tables based on available attributes attributes
+-                foreach ($temporaryEavAttributes as $tableName => $columns) {
+-                    $this->_createTemporaryTable($this->_getTemporaryTableName($tableName), $columns);
+-                }
++            $temporaryEavAttributes = $eavAttributes;
++
++            //add status global value to the base table
++            /* @var $status Mage_Eav_Model_Entity_Attribute */
++            $status = $this->_productHelper->getAttribute('status');
++            $temporaryEavAttributes[$status->getBackendTable()]['status'] = $status;
++            //Create list of temporary tables based on available attributes attributes
++            foreach ($temporaryEavAttributes as $tableName => $columns) {
++                $this->_createTemporaryTable($this->_getTemporaryTableName($tableName), $columns);
++            }
+ 
+-                //Fill "base" table which contains all available products
+-                $this->_fillTemporaryEntityTable($entityTableName, $entityTableColumns, $changedIds);
++            //Fill "base" table which contains all available products
++            $this->_fillTemporaryEntityTable($entityTableName, $entityTableColumns, $changedIds);
+ 
+-                //Add primary key to "base" temporary table for increase speed of joins in future
+-                $this->_addPrimaryKeyToTable($this->_getTemporaryTableName($entityTableName));
+-                unset($temporaryEavAttributes[$entityTableName]);
++            //Add primary key to "base" temporary table for increase speed of joins in future
++            $this->_addPrimaryKeyToTable($this->_getTemporaryTableName($entityTableName));
++            unset($temporaryEavAttributes[$entityTableName]);
+ 
+-                foreach ($temporaryEavAttributes as $tableName => $columns) {
+-                    $temporaryTableName = $this->_getTemporaryTableName($tableName);
++            foreach ($temporaryEavAttributes as $tableName => $columns) {
++                $temporaryTableName = $this->_getTemporaryTableName($tableName);
+ 
+-                    //Add primary key to temporary table for increase speed of joins in future
+-                    $this->_addPrimaryKeyToTable($temporaryTableName);
++                //Add primary key to temporary table for increase speed of joins in future
++                $this->_addPrimaryKeyToTable($temporaryTableName);
+ 
+-                    //Create temporary table for composite attributes
+-                    if (isset($this->_valueTables[$temporaryTableName . $this->_valueFieldSuffix])) {
+-                        $this->_addPrimaryKeyToTable($temporaryTableName . $this->_valueFieldSuffix);
+-                    }
+-
+-                    //Fill temporary tables with attributes grouped by it type
+-                    $this->_fillTemporaryTable($tableName, $columns, $changedIds);
++                //Create temporary table for composite attributes
++                if (isset($this->_valueTables[$temporaryTableName . $this->_valueFieldSuffix])) {
++                    $this->_addPrimaryKeyToTable($temporaryTableName . $this->_valueFieldSuffix);
+                 }
++
++                //Fill temporary tables with attributes grouped by it type
++                $this->_fillTemporaryTable($tableName, $columns, $changedIds);
+             }
+             //Create and fill flat temporary table
+             $this->_createTemporaryFlatTable();
+@@ -806,7 +796,6 @@ class Enterprise_Catalog_Model_Index_Action_Product_Flat_Refresh extends Enterpr
+             $this->_updateEventAttributes($this->_storeId);
+             $this->_updateRelationProducts($this->_storeId, $changedIds);
+             $this->_cleanRelationProducts($this->_storeId);
+-            self::$_calls++;
+             $flag->setIsBuilt(true)->setStoreBuilt($this->_storeId, true)->save();
+         } catch (Exception $e) {
+             $flag->setIsBuilt(false)->setStoreBuilt($this->_storeId, false)->save();
+diff --git app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh/Changelog.php app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh/Changelog.php
+index 0813ed9..2d1bdd5 100644
+--- app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh/Changelog.php
++++ app/code/core/Enterprise/Catalog/Model/Index/Action/Product/Flat/Refresh/Changelog.php
+@@ -86,13 +86,11 @@ class Enterprise_Catalog_Model_Index_Action_Product_Flat_Refresh_Changelog
+         $changedIds = $this->_selectChangedIds();
+         if (!empty($changedIds)) {
+             $stores = Mage::app()->getStores();
+-            $resetFlag = true;
+             foreach ($stores as $store) {
+                 $idsBatches = array_chunk($changedIds, Mage::helper('enterprise_index')->getBatchSize());
+                 foreach ($idsBatches as $ids) {
+-                    $this->_reindex($store->getId(), $ids, $resetFlag);
++                    $this->_reindex($store->getId(), $ids);
+                 }
+-                $resetFlag = false;
+             }
+             $this->_setChangelogValid();
+             Mage::dispatchEvent('catalog_product_flat_partial_reindex', array('product_ids' => $changedIds));

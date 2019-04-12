@@ -1,0 +1,139 @@
+diff --git app/code/core/Mage/Adminhtml/controllers/CustomerController.php app/code/core/Mage/Adminhtml/controllers/CustomerController.php
+index 3088145..0a6225a 100644
+--- app/code/core/Mage/Adminhtml/controllers/CustomerController.php
++++ app/code/core/Mage/Adminhtml/controllers/CustomerController.php
+@@ -333,7 +333,6 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
+                 // Force new customer confirmation
+                 if ($isNewCustomer) {
+                     $customer->setPassword($data['account']['password']);
+-                    $customer->setPasswordCreatedAt(time());
+                     $customer->setForceConfirmed(true);
+                     if ($customer->getPassword() == 'auto') {
+                         $sendPassToEmail = true;
+diff --git app/code/core/Mage/Core/Model/Session/Abstract/Varien.php app/code/core/Mage/Core/Model/Session/Abstract/Varien.php
+index 59b3ea8..296c101 100644
+--- app/code/core/Mage/Core/Model/Session/Abstract/Varien.php
++++ app/code/core/Mage/Core/Model/Session/Abstract/Varien.php
+@@ -33,7 +33,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
+     const VALIDATOR_HTTP_VIA_KEY                = 'http_via';
+     const VALIDATOR_REMOTE_ADDR_KEY             = 'remote_addr';
+     const VALIDATOR_SESSION_EXPIRE_TIMESTAMP    = 'session_expire_timestamp';
+-    const VALIDATOR_PASSWORD_CREATE_TIMESTAMP   = 'password_create_timestamp';
+     const SECURE_COOKIE_CHECK_KEY               = '_secure_cookie_check';
+ 
+     /**
+@@ -395,16 +394,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
+     }
+ 
+     /**
+-     * Use password creation timestamp in validator key
+-     *
+-     * @return bool
+-     */
+-    public function useValidateSessionPasswordTimestamp()
+-    {
+-        return true;
+-    }
+-
+-    /**
+      * Retrieve skip User Agent validation strings (Flash etc)
+      *
+      * @return array
+@@ -481,14 +470,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
+             $this->_data[self::VALIDATOR_KEY][self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP]
+                 = $validatorData[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP];
+         }
+-        if ($this->useValidateSessionPasswordTimestamp()
+-            && isset($validatorData[self::VALIDATOR_PASSWORD_CREATE_TIMESTAMP])
+-            && isset($sessionData[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP])
+-            && $validatorData[self::VALIDATOR_PASSWORD_CREATE_TIMESTAMP]
+-            > $sessionData[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP] - $this->getCookie()->getLifetime()
+-        ) {
+-            return false;
+-        }
+ 
+         return true;
+     }
+@@ -525,11 +506,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
+ 
+         $parts[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP] = time() + $this->getCookie()->getLifetime();
+ 
+-        if (isset($this->_data['visitor_data']['customer_id'])) {
+-            $parts[self::VALIDATOR_PASSWORD_CREATE_TIMESTAMP] =
+-                Mage::helper('customer')->getPasswordTimestamp($this->_data['visitor_data']['customer_id']);
+-        }
+-
+         return $parts;
+     }
+ 
+diff --git app/code/core/Mage/Customer/Helper/Data.php app/code/core/Mage/Customer/Helper/Data.php
+index f22959a..15f3bbe 100644
+--- app/code/core/Mage/Customer/Helper/Data.php
++++ app/code/core/Mage/Customer/Helper/Data.php
+@@ -723,23 +723,6 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
+     }
+ 
+     /**
+-     * Get customer password creation timestamp or customer account creation timestamp
+-     *
+-     * @param $customerId
+-     * @return int
+-     */
+-    public function getPasswordTimestamp($customerId)
+-    {
+-        /** @var $customer Mage_Customer_Model_Customer */
+-        $customer = Mage::getModel('customer/customer')
+-            ->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+-            ->load((int)$customerId);
+-        $passwordCreatedAt = $customer->getPasswordCreatedAt();
+-
+-        return is_null($passwordCreatedAt) ? $customer->getCreatedAtTimestamp() : $passwordCreatedAt;
+-    }
+-
+-    /**
+      * Create SOAP client based on VAT validation service WSDL
+      *
+      * @param boolean $trace
+diff --git app/code/core/Mage/Customer/Model/Resource/Customer.php app/code/core/Mage/Customer/Model/Resource/Customer.php
+index 90ecc60..e13c939 100644
+--- app/code/core/Mage/Customer/Model/Resource/Customer.php
++++ app/code/core/Mage/Customer/Model/Resource/Customer.php
+@@ -235,9 +235,8 @@ class Mage_Customer_Model_Resource_Customer extends Mage_Eav_Model_Entity_Abstra
+      */
+     public function changePassword(Mage_Customer_Model_Customer $customer, $newPassword)
+     {
+-        $customer->setPassword($newPassword)->setPasswordCreatedAt(time());
++        $customer->setPassword($newPassword);
+         $this->saveAttribute($customer, 'password_hash');
+-        $this->saveAttribute($customer, 'password_created_at');
+         return $this;
+     }
+ 
+diff --git app/code/core/Mage/Customer/controllers/AccountController.php app/code/core/Mage/Customer/controllers/AccountController.php
+index 30a7c3c..5348248 100644
+--- app/code/core/Mage/Customer/controllers/AccountController.php
++++ app/code/core/Mage/Customer/controllers/AccountController.php
+@@ -298,7 +298,6 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+ 
+             if (empty($errors)) {
+                 $customer->cleanPasswordsValidationData();
+-                $customer->setPasswordCreatedAt(time());
+                 $customer->save();
+                 $this->_dispatchRegisterSuccess($customer);
+                 $this->_successProcessRegistration($customer);
+@@ -866,7 +865,6 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+             $customer->setRpToken(null);
+             $customer->setRpTokenCreatedAt(null);
+             $customer->cleanPasswordsValidationData();
+-            $customer->setPasswordCreatedAt(time());
+             $customer->save();
+ 
+             $this->_getSession()->unsetData(self::TOKEN_SESSION_NAME);
+@@ -1011,7 +1009,6 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
+ 
+             try {
+                 $customer->cleanPasswordsValidationData();
+-                $customer->setPasswordCreatedAt(time());
+ 
+                 // Reset all password reset tokens if all data was sufficient and correct on email change
+                 if ($customer->getIsChangeEmail()) {

@@ -1,0 +1,13 @@
+diff --git app/code/core/Enterprise/Catalog/Model/Index/Action/Catalog/Category/Product/Refresh.php app/code/core/Enterprise/Catalog/Model/Index/Action/Catalog/Category/Product/Refresh.php
+index ff9883a..b635f87 100644
+--- app/code/core/Enterprise/Catalog/Model/Index/Action/Catalog/Category/Product/Refresh.php
++++ app/code/core/Enterprise/Catalog/Model/Index/Action/Catalog/Category/Product/Refresh.php
+@@ -809,7 +809,7 @@ class Enterprise_Catalog_Model_Index_Action_Catalog_Category_Product_Refresh
+                     $this->_connection->getIfNullSql('cpvs.value', 'cpvd.value') . ' IN (?)',
+                     array(
+                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
+-                        Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
++                        Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_SEARCH
+                     )
+                 )
+                 ->group('cp.entity_id')

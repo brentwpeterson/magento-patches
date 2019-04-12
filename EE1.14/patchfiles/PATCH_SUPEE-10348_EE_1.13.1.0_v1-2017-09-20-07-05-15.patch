@@ -1,0 +1,12 @@
+diff --git app/design/frontend/enterprise/default/template/giftcardaccount/onepage/payment/scripts.phtml app/design/frontend/enterprise/default/template/giftcardaccount/onepage/payment/scripts.phtml
+index dcdc29a..5ddc342 100644
+--- app/design/frontend/enterprise/default/template/giftcardaccount/onepage/payment/scripts.phtml
++++ app/design/frontend/enterprise/default/template/giftcardaccount/onepage/payment/scripts.phtml
+@@ -35,6 +35,7 @@ function enablePaymentMethods(free) {
+             if (elements[i].name == 'payment[method]'
+                 || elements[i].name == 'payment[use_customer_balance]'
+                 || elements[i].name == 'payment[use_reward_points]'
++                || elements[i].name == 'form_key'
+             ) {
+                 methodName = elements[i].value;
+                 if ((free && methodName == 'free') || (!free && methodName != 'free')) {

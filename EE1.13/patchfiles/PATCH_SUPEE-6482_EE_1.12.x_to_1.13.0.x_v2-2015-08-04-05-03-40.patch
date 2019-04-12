@@ -1,0 +1,116 @@
+diff --git app/code/core/Enterprise/PageCache/Model/Processor.php app/code/core/Enterprise/PageCache/Model/Processor.php
+index fa76ec8..b8a8814 100644
+--- app/code/core/Enterprise/PageCache/Model/Processor.php
++++ app/code/core/Enterprise/PageCache/Model/Processor.php
+@@ -695,6 +695,11 @@ class Enterprise_PageCache_Model_Processor
+          * Define server HTTP HOST
+          */
+         if (isset($_SERVER['HTTP_HOST'])) {
++            if (strpos($_SERVER['HTTP_HOST'], ',') !== false || strpos($_SERVER['HTTP_HOST'], ';') !== false) {
++                $response = new Zend_Controller_Response_Http();
++                $response->setHttpResponseCode(400)->sendHeaders();
++                exit();
++            }
+             $uri = $_SERVER['HTTP_HOST'];
+         } elseif (isset($_SERVER['SERVER_NAME'])) {
+             $uri = $_SERVER['SERVER_NAME'];
+diff --git app/code/core/Mage/Api/Model/Server/Adapter/Soap.php app/code/core/Mage/Api/Model/Server/Adapter/Soap.php
+index 424f158..a06a176 100644
+--- app/code/core/Mage/Api/Model/Server/Adapter/Soap.php
++++ app/code/core/Mage/Api/Model/Server/Adapter/Soap.php
+@@ -208,12 +208,14 @@ class Mage_Api_Model_Server_Adapter_Soap
+             ? $urlModel->getUrl('*/*/*', array('_current' => true, '_query' => $params))
+             : $urlModel->getUrl('*/*/*');
+ 
+-        if( $withAuth ) {
+-            $phpAuthUser = $this->getController()->getRequest()->getServer('PHP_AUTH_USER', false);
+-            $phpAuthPw = $this->getController()->getRequest()->getServer('PHP_AUTH_PW', false);
++        if ( $withAuth ) {
++            $phpAuthUser = rawurlencode($this->getController()->getRequest()->getServer('PHP_AUTH_USER', false));
++            $phpAuthPw = rawurlencode($this->getController()->getRequest()->getServer('PHP_AUTH_PW', false));
++            $scheme = rawurlencode($this->getController()->getRequest()->getScheme());
+ 
+             if ($phpAuthUser && $phpAuthPw) {
+-                $wsdlUrl = sprintf("http://%s:%s@%s", $phpAuthUser, $phpAuthPw, str_replace('http://', '', $wsdlUrl ));
++                $wsdlUrl = sprintf("%s://%s:%s@%s", $scheme, $phpAuthUser, $phpAuthPw,
++                    str_replace($scheme . '://', '', $wsdlUrl));
+             }
+         }
+ 
+diff --git app/code/core/Mage/Catalog/Model/Product/Api/V2.php app/code/core/Mage/Catalog/Model/Product/Api/V2.php
+index 0123749..6e19737 100644
+--- app/code/core/Mage/Catalog/Model/Product/Api/V2.php
++++ app/code/core/Mage/Catalog/Model/Product/Api/V2.php
+@@ -108,7 +108,7 @@ class Mage_Catalog_Model_Product_Api_V2 extends Mage_Catalog_Model_Product_Api
+      */
+     public function create($type, $set, $sku, $productData, $store = null)
+     {
+-        if (!$type || !$set || !$sku) {
++        if (!$type || !$set || !$sku || !is_object($productData)) {
+             $this->_fault('data_invalid');
+         }
+ 
+@@ -243,6 +243,9 @@ class Mage_Catalog_Model_Product_Api_V2 extends Mage_Catalog_Model_Product_Api
+      */
+     protected function _prepareDataForSave ($product, $productData)
+     {
++        if (!is_object($productData)) {
++            $this->_fault('data_invalid');
++        }
+         if (property_exists($productData, 'website_ids') && is_array($productData->website_ids)) {
+             $product->setWebsiteIds($productData->website_ids);
+         }
+diff --git app/code/core/Mage/Core/Controller/Request/Http.php app/code/core/Mage/Core/Controller/Request/Http.php
+index 886c11f..9a60adb 100644
+--- app/code/core/Mage/Core/Controller/Request/Http.php
++++ app/code/core/Mage/Core/Controller/Request/Http.php
+@@ -287,11 +287,19 @@ class Mage_Core_Controller_Request_Http extends Zend_Controller_Request_Http
+         if (!isset($_SERVER['HTTP_HOST'])) {
+             return false;
+         }
++        $host = $_SERVER['HTTP_HOST'];
+         if ($trimPort) {
+-            $host = explode(':', $_SERVER['HTTP_HOST']);
+-            return $host[0];
++            $hostParts = explode(':', $_SERVER['HTTP_HOST']);
++            $host =  $hostParts[0];
+         }
+-        return $_SERVER['HTTP_HOST'];
++
++        if (strpos($host, ',') !== false || strpos($host, ';') !== false) {
++            $response = new Zend_Controller_Response_Http();
++            $response->setHttpResponseCode(400)->sendHeaders();
++            exit();
++        }
++
++        return $host;
+     }
+ 
+     /**
+diff --git app/design/frontend/base/default/template/page/js/cookie.phtml app/design/frontend/base/default/template/page/js/cookie.phtml
+index 674fca0..2910a00 100644
+--- app/design/frontend/base/default/template/page/js/cookie.phtml
++++ app/design/frontend/base/default/template/page/js/cookie.phtml
+@@ -34,7 +34,7 @@
+ 
+ <script type="text/javascript">
+ //<![CDATA[
+-Mage.Cookies.path     = '<?php echo $this->getPath()?>';
+-Mage.Cookies.domain   = '<?php echo $this->getDomain()?>';
++Mage.Cookies.path     = '<?php echo Mage::helper('core')->jsQuoteEscape($this->getPath()) ?>';
++Mage.Cookies.domain   = '<?php echo Mage::helper('core')->jsQuoteEscape($this->getDomain()) ?>';
+ //]]>
+ </script>
+diff --git app/design/frontend/enterprise/default/template/giftregistry/search/form.phtml app/design/frontend/enterprise/default/template/giftregistry/search/form.phtml
+index 4f452e4..b7e8b8d 100644
+--- app/design/frontend/enterprise/default/template/giftregistry/search/form.phtml
++++ app/design/frontend/enterprise/default/template/giftregistry/search/form.phtml
+@@ -138,7 +138,7 @@ $('params_type_id').observe('change', advancedFormUpdate);
+ 
+ <?php if ($this->getFormData('type_id')): ?>
+     $A($('params_type_id').options).each(function(option){
+-        if (option.value==<?php echo $this->getFormData('type_id') ?>) option.selected = true;
++        if (option.value==<?php echo (int)$this->getFormData('type_id') ?>) option.selected = true;
+     });
+     advancedFormUpdate();
+ <?php endif; ?>

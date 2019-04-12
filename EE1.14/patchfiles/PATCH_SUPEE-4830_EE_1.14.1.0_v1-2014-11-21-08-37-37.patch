@@ -1,0 +1,13 @@
+diff --git app/code/core/Mage/ConfigurableSwatches/Helper/Productimg.php app/code/core/Mage/ConfigurableSwatches/Helper/Productimg.php
+index 9d2d0e1..7613d00 100644
+--- app/code/core/Mage/ConfigurableSwatches/Helper/Productimg.php
++++ app/code/core/Mage/ConfigurableSwatches/Helper/Productimg.php
+@@ -227,6 +227,8 @@ class Mage_ConfigurableSwatches_Helper_Productimg extends Mage_Core_Helper_Abstr
+             $fileExt = self::SWATCH_FILE_EXT;
+         }
+ 
++        // normalize to all lower case so that value can be used as array key below
++        $value = Mage_ConfigurableSwatches_Helper_Data::normalizeKey($value);
+         $defaultValue = $value; // default to no fallback value
+         if ($object instanceof Mage_Catalog_Model_Layer_Filter_Item) { // fallback for swatches loaded for nav filters
+             $source = $object->getFilter()->getAttributeModel()->getFrontend()->getAttribute()->getSource();

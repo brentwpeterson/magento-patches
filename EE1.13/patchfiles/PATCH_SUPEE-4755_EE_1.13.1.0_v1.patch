@@ -1,0 +1,14 @@
+diff --git app/code/core/Mage/Core/Model/Config.php app/code/core/Mage/Core/Model/Config.php
+index 7fb0e70..89a8a78 100644
+--- app/code/core/Mage/Core/Model/Config.php
++++ app/code/core/Mage/Core/Model/Config.php
+@@ -256,6 +256,9 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
+         if ($cacheLoad) {
+             return $this;
+         }
++
++        $this->_useCache = false;
++
+         $this->loadModules();
+         $this->loadDb();
+         $this->saveCache();

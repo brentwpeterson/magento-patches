@@ -1,0 +1,53 @@
+diff --git app/code/core/Mage/Paypal/Model/Ipn.php app/code/core/Mage/Paypal/Model/Ipn.php
+index 49a74cc85ef..e25239f398f 100644
+--- app/code/core/Mage/Paypal/Model/Ipn.php
++++ app/code/core/Mage/Paypal/Model/Ipn.php
+@@ -36,7 +36,21 @@ class Mage_Paypal_Model_Ipn
+      */
+     const DEFAULT_LOG_FILE = 'paypal_unknown_ipn.log';
+ 
+-    /*
++    /**
++     * Default postback endpoint URL.
++     *
++     * @var string
++     */
++    const DEFAULT_POSTBACK_URL = 'https://ipnpb.paypal.com/cgi-bin/webscr';
++
++    /**
++     * Sandbox postback endpoint URL.
++     *
++     * @var string
++     */
++    const SANDBOX_POSTBACK_URL = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
++
++    /**
+      * @param Mage_Sales_Model_Order
+      */
+     protected $_order = null;
+@@ -131,7 +145,7 @@ class Mage_Paypal_Model_Ipn
+     protected function _postBack(Zend_Http_Client_Adapter_Interface $httpAdapter)
+     {
+         $postbackQuery = http_build_query($this->_request) . '&cmd=_notify-validate';
+-        $postbackUrl = $this->_config->getPaypalUrl();
++        $postbackUrl = $this->_getPostbackUrl();
+         $this->_debugData['postback_to'] = $postbackUrl;
+ 
+         $httpAdapter->setConfig(array('verifypeer' => $this->_config->verifyPeer));
+@@ -160,6 +174,16 @@ class Mage_Paypal_Model_Ipn
+     }
+ 
+     /**
++     * Get postback endpoint URL.
++     *
++     * @return string
++     */
++    protected function _getPostbackUrl()
++    {
++        return $this->_config->sandboxFlag ? self::SANDBOX_POSTBACK_URL : self::DEFAULT_POSTBACK_URL;
++    }
++
++    /**
+      * Load and validate order, instantiate proper configuration
+      *
+      *

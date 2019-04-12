@@ -1,0 +1,80 @@
+diff --git app/code/core/Enterprise/PageCache/Model/Processor.php app/code/core/Enterprise/PageCache/Model/Processor.php
+index 40879c1..b4c2462 100644
+--- app/code/core/Enterprise/PageCache/Model/Processor.php
++++ app/code/core/Enterprise/PageCache/Model/Processor.php
+@@ -69,6 +69,11 @@ class Enterprise_PageCache_Model_Processor
+          * Define server HTTP HOST
+          */
+         if (isset($_SERVER['HTTP_HOST'])) {
++            if (strpos($_SERVER['HTTP_HOST'], ',') !== false || strpos($_SERVER['HTTP_HOST'], ';') !== false) {
++                $response = new Zend_Controller_Response_Http();
++                $response->setHttpResponseCode(400)->sendHeaders();
++                exit();
++            }
+             $uri = $_SERVER['HTTP_HOST'];
+         } elseif (isset($_SERVER['SERVER_NAME'])) {
+             $uri = $_SERVER['SERVER_NAME'];
+diff --git app/code/core/Mage/Catalog/Model/Product/Api/V2.php app/code/core/Mage/Catalog/Model/Product/Api/V2.php
+index 3637fb7..5b03566 100644
+--- app/code/core/Mage/Catalog/Model/Product/Api/V2.php
++++ app/code/core/Mage/Catalog/Model/Product/Api/V2.php
+@@ -157,7 +157,7 @@ class Mage_Catalog_Model_Product_Api_V2 extends Mage_Catalog_Model_Product_Api
+      */
+     public function create($type, $set, $sku, $productData)
+     {
+-        if (!$type || !$set || !$sku) {
++        if (!$type || !$set || !$sku || !is_object($productData)) {
+             $this->_fault('data_invalid');
+         }
+         $product = Mage::getModel('catalog/product');
+@@ -272,6 +272,9 @@ class Mage_Catalog_Model_Product_Api_V2 extends Mage_Catalog_Model_Product_Api
+      */
+     protected function _prepareDataForSave ($product, $productData)
+     {
++        if (!is_object($productData)) {
++            $this->_fault('data_invalid');
++        }
+         if (property_exists($productData, 'categories') && is_array($productData->categories)) {
+             $product->setCategoryIds($productData->categories);
+         }
+diff --git app/code/core/Mage/Core/Controller/Request/Http.php app/code/core/Mage/Core/Controller/Request/Http.php
+index d5e8597..58b6c60 100644
+--- app/code/core/Mage/Core/Controller/Request/Http.php
++++ app/code/core/Mage/Core/Controller/Request/Http.php
+@@ -285,11 +285,19 @@ class Mage_Core_Controller_Request_Http extends Zend_Controller_Request_Http
+         if (!isset($_SERVER['HTTP_HOST'])) {
+             return false;
+         }
++        $host = $_SERVER['HTTP_HOST'];
+         if ($trimPort) {
+-            $host = explode(':', $_SERVER['HTTP_HOST']);
+-            return $host[0];
++            $hostParts = explode(':', $_SERVER['HTTP_HOST']);
++            $host =  $hostParts[0];
+         }
+-        return $_SERVER['HTTP_HOST'];
++
++        if (strpos($host, ',') !== false || strpos($host, ';') !== false) {
++            $response = new Zend_Controller_Response_Http();
++            $response->setHttpResponseCode(400)->sendHeaders();
++            exit();
++        }
++
++        return $host;
+     }
+ 
+     /**
+diff --git app/design/frontend/base/default/template/page/js/cookie.phtml app/design/frontend/base/default/template/page/js/cookie.phtml
+index f6e6f52..cf31c23 100644
+--- app/design/frontend/base/default/template/page/js/cookie.phtml
++++ app/design/frontend/base/default/template/page/js/cookie.phtml
+@@ -34,7 +34,7 @@
+ 
+ <script type="text/javascript">
+ //<![CDATA[
+-Mage.Cookies.path     = '<?php echo $this->getPath()?>';
+-Mage.Cookies.domain   = '<?php echo $this->getDomain()?>';
++Mage.Cookies.path     = '<?php echo Mage::helper('core')->jsQuoteEscape($this->getPath()) ?>';
++Mage.Cookies.domain   = '<?php echo Mage::helper('core')->jsQuoteEscape($this->getDomain()) ?>';
+ //]]>
+ </script>

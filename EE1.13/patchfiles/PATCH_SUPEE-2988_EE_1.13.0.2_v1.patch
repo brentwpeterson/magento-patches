@@ -1,0 +1,17 @@
+diff --git app/code/core/Mage/CatalogRule/Model/Observer.php app/code/core/Mage/CatalogRule/Model/Observer.php
+index 0f033a4..9c3355a 100644
+--- app/code/core/Mage/CatalogRule/Model/Observer.php
++++ app/code/core/Mage/CatalogRule/Model/Observer.php
+@@ -199,9 +199,9 @@ class Mage_CatalogRule_Model_Observer
+      */
+     public function dailyCatalogUpdate($observer)
+     {
+-        /** @var $resource Mage_CatalogRule_Model_Resource_Rule */
+-        $resource = Mage::getResourceSingleton('catalogrule/rule');
+-        $resource->applyAllRules();
++        /** @var $model Mage_CatalogRule_Model_Rule */
++        $model = Mage::getSingleton('catalogrule/rule');
++        $model->applyAll();
+ 
+         return $this;
+     }

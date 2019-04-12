@@ -1,0 +1,53 @@
+diff --git app/code/core/Mage/Cms/Helper/Wysiwyg/Images.php app/code/core/Mage/Cms/Helper/Wysiwyg/Images.php
+index 2e799c5..18aecc0 100644
+--- app/code/core/Mage/Cms/Helper/Wysiwyg/Images.php
++++ app/code/core/Mage/Cms/Helper/Wysiwyg/Images.php
+@@ -44,13 +44,22 @@ class Mage_Cms_Helper_Wysiwyg_Images extends Mage_Core_Helper_Abstract
+ 
+     /**
+      * Images Storage root directory
++     * @var string
++     */
++    protected $_storageRoot;
++
++    /**
++     * Return Images Storage root directory
+      *
+      * @return string
+      */
+     public function getStorageRoot()
+     {
+-        $root = $this->correctPath( $this->getStorage()->getConfigData('upload_root') );
+-        return Mage::getConfig()->getOptions()->getMediaDir() . DS . $root;
++        if (!$this->_storageRoot) {
++            $root = $this->correctPath($this->getStorage()->getConfigData('upload_root'));
++            $this->_storageRoot = realpath(Mage::getConfig()->getOptions()->getMediaDir() . DS . $root);
++        }
++        return $this->_storageRoot;
+     }
+ 
+     /**
+@@ -160,10 +169,10 @@ class Mage_Cms_Helper_Wysiwyg_Images extends Mage_Core_Helper_Abstract
+     {
+         if (!$this->_currentPath) {
+             $currentPath = $this->getStorageRoot();
+-            $path = $this->_getRequest()->getParam($this->getTreeNodeName());
+-            if ($path) {
+-                $path = $this->convertIdToPath($path);
+-                if (is_dir($path)) {
++            $node = $this->_getRequest()->getParam($this->getTreeNodeName());
++            if ($node) {
++                $path = realpath($this->convertIdToPath($node));
++                if (is_dir($path) && false !== stripos($path, $currentPath)) {
+                     $currentPath = $path;
+                 }
+             }
+@@ -185,7 +194,7 @@ class Mage_Cms_Helper_Wysiwyg_Images extends Mage_Core_Helper_Abstract
+     public function getCurrentUrl()
+     {
+         if (!$this->_currentUrl) {
+-            $path = str_replace(Mage::getConfig()->getOptions()->getMediaDir(), '', $this->getCurrentPath());
++            $path = str_replace(realpath(Mage::getConfig()->getOptions()->getMediaDir()), '', $this->getCurrentPath());
+             $path = trim($path, DS);
+             $this->_currentUrl = Mage::getBaseUrl('media') . $this->convertPathToUrl($path) . '/';
+         }

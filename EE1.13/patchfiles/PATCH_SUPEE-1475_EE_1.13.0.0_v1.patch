@@ -1,0 +1,112 @@
+diff --git app/code/core/Enterprise/UrlRewrite/controllers/Adminhtml/UrlrewriteController.php app/code/core/Enterprise/UrlRewrite/controllers/Adminhtml/UrlrewriteController.php
+index 5ec01c6..0036f87 100644
+--- app/code/core/Enterprise/UrlRewrite/controllers/Adminhtml/UrlrewriteController.php
++++ app/code/core/Enterprise/UrlRewrite/controllers/Adminhtml/UrlrewriteController.php
+@@ -143,9 +143,9 @@ class Enterprise_UrlRewrite_Adminhtml_UrlrewriteController extends Mage_Adminhtm
+                 $this->_getSession()->setData('url_redirect_data', $params);
+ 
+                 $model = $this->_getRedirect();
+-                if (!$model->getRedirectId() && isset($params['identifier'])) {
++                if (!$model->getRedirectId() || isset($params['identifier'])) {
+                     $model->load($params['identifier'], 'identifier');
+-                    if ($model->getRedirectId()) {
++                    if ($model->getRedirectId() && $model->getRedirectId() != $this->_getRedirectId()) {
+                         Mage::throwException($this->__('URL Redirect with same Request Path already exists.'));
+                     }
+                 }
+diff --git app/code/core/Mage/Catalog/data/catalog_setup/data-upgrade-1.6.0.0.17.0.1-1.6.0.0.17.0.2.php app/code/core/Mage/Catalog/data/catalog_setup/data-upgrade-1.6.0.0.17.0.1-1.6.0.0.17.0.2.php
+new file mode 100644
+index 0000000..1673cba
+--- /dev/null
++++ app/code/core/Mage/Catalog/data/catalog_setup/data-upgrade-1.6.0.0.17.0.1-1.6.0.0.17.0.2.php
+@@ -0,0 +1,77 @@
++<?php
++/**
++ * Magento Enterprise Edition
++ *
++ * NOTICE OF LICENSE
++ *
++ * This source file is subject to the Magento Enterprise Edition License
++ * that is bundled with this package in the file LICENSE_EE.txt.
++ * It is also available through the world-wide-web at this URL:
++ * http://www.magentocommerce.com/license/enterprise-edition
++ * If you did not receive a copy of the license and are unable to
++ * obtain it through the world-wide-web, please send an email
++ * to license@magentocommerce.com so we can send you a copy immediately.
++ *
++ * DISCLAIMER
++ *
++ * Do not edit or add to this file if you wish to upgrade Magento to newer
++ * versions in the future. If you wish to customize Magento for your
++ * needs please refer to http://www.magentocommerce.com for more information.
++ *
++ * @category    Mage
++ * @package     Mage_Catalog
++ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
++ * @license     http://www.magentocommerce.com/license/enterprise-edition
++ */
++/** @var $this Mage_Catalog_Model_Resource_Setup */
++
++$this->startSetup();
++$connection = $this->getConnection();
++
++foreach (array('catalog/product', 'catalog/category') as $tableName) {
++    $urlKeyTable = $this->getTable(array($tableName, 'url_key'));
++
++    $connection->truncateTable($urlKeyTable);
++
++    $select = $connection->select()
++        ->from(array('ev' => $this->getTable(array($tableName, 'varchar'))),
++        array(
++            'evs.entity_type_id',
++            'evs.attribute_id',
++            'evs.store_id',
++            'evs.entity_id',
++            'value' => $connection->getCheckSql(
++                $connection->quoteIdentifier('evs.value_id') . ' = ' . $connection->quoteIdentifier('ev.value_id'),
++                $connection->quoteIdentifier('ev.value'),
++                $connection->getConcatSql(array(
++                    $connection->quoteIdentifier('evs.value'),
++                    $connection->quoteIdentifier('evs.value_id')
++                ), '-')
++            )
++        )
++    )->join(
++        array('ea' => $this->getTable('eav/attribute')),
++        $connection->quoteIdentifier('ea.attribute_id') . ' = ' .
++            $connection->quoteIdentifier('ev.attribute_id') . ' AND ' .
++            $connection->quoteInto($connection->quoteIdentifier('ea.attribute_code') . ' = ?', 'url_key'),
++        array()
++    )->joinLeft(
++        array('evs' => $this->getTable(array($tableName, 'varchar'))),
++        $connection->quoteIdentifier('ev.value') . ' = ' . $connection->quoteIdentifier('evs.value') . ' AND ' .
++            $connection->quoteIdentifier('ea.attribute_id') . ' = ' . $connection->quoteIdentifier('evs.attribute_id'),
++        array()
++    )->where(
++        'ev.value != ?', ''
++    )->where(
++        'evs.value != ?', ''
++    )->group('evs.value_id')
++    ;
++
++    $insertQuery = $connection->insertFromSelect($select, $urlKeyTable,
++        array('entity_type_id', 'attribute_id', 'store_id', 'entity_id', 'value')
++    );
++
++    $connection->query($insertQuery);
++}
++
++$this->endSetup();
+diff --git app/code/core/Mage/Catalog/etc/config.xml app/code/core/Mage/Catalog/etc/config.xml
+index 2831e8c..015100a 100644
+--- app/code/core/Mage/Catalog/etc/config.xml
++++ app/code/core/Mage/Catalog/etc/config.xml
+@@ -28,7 +28,7 @@
+ <config>
+     <modules>
+         <Mage_Catalog>
+-            <version>1.6.0.0.17</version>
++            <version>1.6.0.0.17.0.2</version>
+         </Mage_Catalog>
+     </modules>
+     <admin>
