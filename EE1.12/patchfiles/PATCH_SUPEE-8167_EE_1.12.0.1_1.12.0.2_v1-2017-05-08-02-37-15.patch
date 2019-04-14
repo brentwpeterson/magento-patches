@@ -1,0 +1,64 @@
+diff --git app/code/core/Mage/Paypal/Model/Ipn.php app/code/core/Mage/Paypal/Model/Ipn.php
+index 730d09b1c0f..3c30874d0a4 100644
+--- app/code/core/Mage/Paypal/Model/Ipn.php
++++ app/code/core/Mage/Paypal/Model/Ipn.php
+@@ -36,6 +36,20 @@ class Mage_Paypal_Model_Ipn
+      */
+     const DEFAULT_LOG_FILE = 'paypal_unknown_ipn.log';
+ 
++    /**
++     * Default postback endpoint URL.
++     *
++     * @var string
++     */
++    const DEFAULT_POSTBACK_URL = 'https://ipnpb.paypal.com/cgi-bin/webscr';
++
++    /**
++     * Sandbox postback endpoint URL.
++     *
++     * @var string
++     */
++    const SANDBOX_POSTBACK_URL = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
++
+     /*
+      * @param Mage_Sales_Model_Order
+      */
+@@ -130,6 +144,8 @@ class Mage_Paypal_Model_Ipn
+      */
+     protected function _postBack(Zend_Http_Client_Adapter_Interface $httpAdapter)
+     {
++            $url = $this->_getPostbackUrl();
++
+             $sReq = '';
+             foreach ($this->_request as $k => $v) {
+                 $sReq .= '&'.$k.'='.urlencode($v);
+@@ -137,10 +153,10 @@ class Mage_Paypal_Model_Ipn
+             $sReq .= "&cmd=_notify-validate";
+             $sReq = substr($sReq, 1);
+             $this->_debugData['postback'] = $sReq;
+-            $this->_debugData['postback_to'] = $this->_config->getPaypalUrl();
++            $this->_debugData['postback_to'] = $url;
+ 
+             $httpAdapter->setConfig(array('verifypeer' => $this->_config->verifyPeer));
+-            $httpAdapter->write(Zend_Http_Client::POST, $this->_config->getPaypalUrl(), '1.1', array(), $sReq);
++            $httpAdapter->write(Zend_Http_Client::POST, $url, '1.1', array(), $sReq);
+             try {
+                 $response = $httpAdapter->read();
+             } catch (Exception $e) {
+@@ -158,6 +174,16 @@ class Mage_Paypal_Model_Ipn
+     }
+ 
+     /**
++     * Get postback endpoint URL.
++     *
++     * @return string
++     */
++    protected function _getPostbackUrl()
++    {
++        return $this->_config->sandboxFlag ? self::SANDBOX_POSTBACK_URL : self::DEFAULT_POSTBACK_URL;
++    }
++
++    /**
+      * Load and validate order, instantiate proper configuration
+      *
+      *

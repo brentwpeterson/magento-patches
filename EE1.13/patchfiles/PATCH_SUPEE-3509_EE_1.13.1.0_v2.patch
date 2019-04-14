@@ -1,0 +1,93 @@
+diff --git app/code/core/Mage/CatalogRule/Model/Observer.php app/code/core/Mage/CatalogRule/Model/Observer.php
+index 0f033a4..c1588f0 100644
+--- app/code/core/Mage/CatalogRule/Model/Observer.php
++++ app/code/core/Mage/CatalogRule/Model/Observer.php
+@@ -88,11 +88,9 @@ class Mage_CatalogRule_Model_Observer
+         $pId        = $product->getId();
+         $storeId    = $product->getStoreId();
+ 
+-        if ($observer->hasDate()) {
+-            $date = $observer->getEvent()->getDate();
+-        } else {
+-            $date = Mage::app()->getLocale()->storeTimeStamp($storeId);
+-        }
++        /** @var $coreDate Mage_Core_Model_Date */
++        $coreDate = Mage::getSingleton('core/date');
++        $date = $coreDate->gmtTimestamp('Today');
+ 
+         if ($observer->hasWebsiteId()) {
+             $wId = $observer->getEvent()->getWebsiteId();
+@@ -131,8 +129,11 @@ class Mage_CatalogRule_Model_Observer
+     public function processAdminFinalPrice($observer)
+     {
+         $product = $observer->getEvent()->getProduct();
+-        $storeId = $product->getStoreId();
+-        $date = Mage::app()->getLocale()->storeDate($storeId);
++        
++        /** @var $coreDate Mage_Core_Model_Date */
++        $coreDate = Mage::getSingleton('core/date');
++        $date = $coreDate->gmtTimestamp('Today');
++        
+         $key = false;
+ 
+         if ($ruleData = Mage::registry('rule_data')) {
+@@ -345,11 +346,8 @@ class Mage_CatalogRule_Model_Observer
+                 $groupId = Mage_Customer_Model_Group::NOT_LOGGED_IN_ID;
+             }
+         }
+-        if ($observer->getEvent()->hasDate()) {
+-            $date = $observer->getEvent()->getDate();
+-        } else {
+-            $date = Mage::app()->getLocale()->storeTimeStamp($store);
+-        }
++        
++        $date = Mage::app()->getLocale()->storeTimeStamp($store);
+ 
+         $productIds = array();
+         /* @var $product Mage_Core_Model_Product */
+diff --git app/code/core/Mage/CatalogRule/Model/Resource/Rule.php app/code/core/Mage/CatalogRule/Model/Resource/Rule.php
+index fcd28df..5942bff 100644
+--- app/code/core/Mage/CatalogRule/Model/Resource/Rule.php
++++ app/code/core/Mage/CatalogRule/Model/Resource/Rule.php
+@@ -207,9 +207,12 @@ class Mage_CatalogRule_Model_Resource_Rule extends Mage_Rule_Model_Resource_Abst
+         /** @var $write Varien_Db_Adapter_Interface */
+         $write = $this->_getWriteAdapter();
+ 
++        /** @var $coreDate Mage_Core_Model_Date */
++        $coreDate  = $this->_factory->getModel('core/date');
++
+         $customerGroupIds = $rule->getCustomerGroupIds();
+-        $fromTime = (int) strtotime($rule->getFromDate());
+-        $toTime = (int) strtotime($rule->getToDate());
++        $fromTime = (int) $coreDate->gmtTimestamp($rule->getFromDate());
++        $toTime = (int) $coreDate->gmtTimestamp($rule->getToDate());
+         $toTime = $toTime ? ($toTime + self::SECONDS_IN_DAY - 1) : 0;
+         $sortOrder = (int) $rule->getSortOrder();
+         $actionOperator = $rule->getSimpleAction();
+@@ -662,7 +665,7 @@ class Mage_CatalogRule_Model_Resource_Rule extends Mage_Rule_Model_Resource_Abst
+      * Get catalog rules product price for specific date, website and
+      * customer group
+      *
+-     * @param int|string $date
++     * @param int $date Timestamp
+      * @param int $wId
+      * @param int $gId
+      * @param int $pId
+@@ -683,7 +686,7 @@ class Mage_CatalogRule_Model_Resource_Rule extends Mage_Rule_Model_Resource_Abst
+      * Retrieve product prices by catalog rule for specific date, website and customer group
+      * Collect data with  product Id => price pairs
+      *
+-     * @param int|string $date
++     * @param int $date Timestamp
+      * @param int $websiteId
+      * @param int $customerGroupId
+      * @param array $productIds
+@@ -695,7 +698,7 @@ class Mage_CatalogRule_Model_Resource_Rule extends Mage_Rule_Model_Resource_Abst
+         $adapter = $this->_getReadAdapter();
+         $select  = $adapter->select()
+             ->from($this->getTable('catalogrule/rule_product_price'), array('product_id', 'rule_price'))
+-            ->where('rule_date = ?', $this->formatDate($date, false))
++            ->where('rule_date = ?', $adapter->fromUnixtime($date))
+             ->where('website_id = ?', $websiteId)
+             ->where('customer_group_id = ?', $customerGroupId)
+             ->where('product_id IN(?)', $productIds);

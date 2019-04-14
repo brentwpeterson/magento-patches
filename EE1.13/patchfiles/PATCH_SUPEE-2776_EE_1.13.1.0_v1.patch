@@ -1,0 +1,40 @@
+diff --git app/code/core/Mage/Wishlist/Controller/Abstract.php app/code/core/Mage/Wishlist/Controller/Abstract.php
+index f6dcb5c..79f0b9c 100644
+--- app/code/core/Mage/Wishlist/Controller/Abstract.php
++++ app/code/core/Mage/Wishlist/Controller/Abstract.php
+@@ -73,11 +73,6 @@ abstract class Mage_Wishlist_Controller_Abstract extends Mage_Core_Controller_Fr
+      */
+     public function allcartAction()
+     {
+-        if (!$this->_validateFormKey()) {
+-            $this->_forward('noRoute');
+-            return;
+-        }
+-
+         $wishlist   = $this->_getWishlist();
+         if (!$wishlist) {
+             $this->_forward('noRoute');
+@@ -95,7 +90,9 @@ abstract class Mage_Wishlist_Controller_Abstract extends Mage_Core_Controller_Fr
+                 ->setVisibilityFilter();
+ 
+         $qtysString = $this->getRequest()->getParam('qty');
+-        $qtys =  array_filter(json_decode($qtysString), 'strlen');
++        if (isset($qtysString)) {
++            $qtys =  array_filter(json_decode($qtysString), 'strlen');
++        }
+ 
+         foreach ($collection as $item) {
+             /** @var Mage_Wishlist_Model_Item */
+diff --git app/design/frontend/base/default/template/wishlist/email/items.phtml app/design/frontend/base/default/template/wishlist/email/items.phtml
+index a5e1dd2..7d02f5f 100644
+--- app/design/frontend/base/default/template/wishlist/email/items.phtml
++++ app/design/frontend/base/default/template/wishlist/email/items.phtml
+@@ -38,7 +38,7 @@
+             <p align="center" style="font-size:12px;"><a href="<?php echo $this->getProductUrl($_product) ?>" style="color:#203548;"><strong><?php echo $this->escapeHtml($_product->getName()) ?></strong></a></p>
+             <?php if($this->hasDescription($item)): ?><p align="center" style="font-size:12px;"><?php echo $this->__('Comment') ?>:<br /><?php echo $this->getEscapedDescription($item) ?></p><?php endif; ?>
+             <p align="center" style="font-size:12px;"><a href="<?php echo $this->getProductUrl($_product) ?>" style="color:#1E7EC8;"><?php echo $this->__('View Product') ?></a> <small>
+-            <?php if ($_product->getIsSalable()): ?>|</small> <a href="<?php echo $this->getAddToCartUrl($_product) ?>" style="color:#1E7EC8;"><strong><?php echo $this->__('Add to Cart') ?></strong></a><?php endif;?>
++            <?php if ($_product->getIsSalable()): ?>|</small> <a href="<?php echo $this->_getHelper()->getSharedAddToCartUrl($item) ?>" style="color:#1E7EC8;"><strong><?php echo $this->__('Add to Cart') ?></strong></a><?php endif;?>
+             </p></td>
+         <?php if ($i%3!=0): ?>
+             <td width="2%"></td>

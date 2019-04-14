@@ -1,0 +1,48 @@
+diff --git app/code/core/Mage/Usa/Model/Shipping/Carrier/Abstract.php app/code/core/Mage/Usa/Model/Shipping/Carrier/Abstract.php
+index aba407a..fe85db9 100644
+--- app/code/core/Mage/Usa/Model/Shipping/Carrier/Abstract.php
++++ app/code/core/Mage/Usa/Model/Shipping/Carrier/Abstract.php
+@@ -442,6 +442,17 @@ abstract class Mage_Usa_Model_Shipping_Carrier_Abstract extends Mage_Shipping_Mo
+     }
+ 
+     /**
++     * Check is Canada
++     *
++     * @param string $countryId
++     * @return boolean
++     */
++    protected function _isCanada($countryId)
++    {
++        return $countryId == 'CA';
++    }
++
++    /**
+      * Check whether girth is allowed for the carrier
+      *
+      * @param null|string $countyDest
+diff --git app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
+index f1aa9c6..8091b36 100644
+--- app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
++++ app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
+@@ -392,7 +392,10 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+             $package->addChild('Height', $height);
+             $package->addChild('Girth', $girth);
+ 
+-
++            if ($this->_isCanada($r->getDestCountryId())) {
++                //only 5 chars available
++                $package->addChild('OriginZip', substr($r->getOrigPostal(), 0, 5));
++            }
+             $api = 'IntlRateV2';
+         }
+         $request = $xml->asXML();
+@@ -477,6 +480,9 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
+                      else {
+                         if (is_object($xml->Package) && is_object($xml->Package->Service)) {
+                             foreach ($xml->Package->Service as $service) {
++                                if ($service->ServiceErrors->count()) {
++                                    continue;
++                                }
+                                 $serviceName = $this->_filterServiceName((string)$service->SvcDescription);
+                                 $serviceCode = 'INT_' . (string)$service->attributes()->ID;
+                                 $serviceCodeToActualNameMap[$serviceCode] = $serviceName;

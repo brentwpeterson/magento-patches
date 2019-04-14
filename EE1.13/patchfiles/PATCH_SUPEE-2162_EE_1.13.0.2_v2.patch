@@ -1,0 +1,44 @@
+diff --git app/code/core/Mage/Checkout/Model/Cart.php app/code/core/Mage/Checkout/Model/Cart.php
+index 9e535ac..2311c15 100644
+--- app/code/core/Mage/Checkout/Model/Cart.php
++++ app/code/core/Mage/Checkout/Model/Cart.php
+@@ -389,6 +389,11 @@ class Mage_Checkout_Model_Cart extends Varien_Object implements Mage_Checkout_Mo
+     {
+         Mage::dispatchEvent('checkout_cart_update_items_before', array('cart'=>$this, 'info'=>$data));
+ 
++        /**
++         * Add product resets multi shipping flag due to unknown address to add
++         */
++        $this->getQuote()->setIsMultiShipping(false);
++
+         /* @var $messageFactory Mage_Core_Model_Message */
+         $messageFactory = Mage::getSingleton('core/message');
+         $session = $this->getCheckoutSession();
+diff --git app/code/core/Mage/Checkout/controllers/CartController.php app/code/core/Mage/Checkout/controllers/CartController.php
+index 2b46e83..1841fab 100644
+--- app/code/core/Mage/Checkout/controllers/CartController.php
++++ app/code/core/Mage/Checkout/controllers/CartController.php
+@@ -123,6 +123,7 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
+     {
+         $cart = $this->_getCart();
+         if ($cart->getQuote()->getItemsCount()) {
++            $this->_getQuote()->setIsMultiShipping(false);
+             $cart->init();
+             $cart->save();
+ 
+diff --git app/code/core/Mage/Sales/Model/Quote.php app/code/core/Mage/Sales/Model/Quote.php
+index a60457b..5ef683c 100644
+--- app/code/core/Mage/Sales/Model/Quote.php
++++ app/code/core/Mage/Sales/Model/Quote.php
+@@ -976,6 +976,11 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
+         }
+ 
+         /**
++         * Add product resets multi shipping flag due to unknown address to add
++         */
++        $this->setIsMultiShipping(false);
++
++        /**
+          * If prepare process return one object
+          */
+         if (!is_array($cartCandidates)) {

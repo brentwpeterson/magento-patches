@@ -1,0 +1,13 @@
+diff --git app/code/core/Mage/Captcha/Model/Observer.php app/code/core/Mage/Captcha/Model/Observer.php
+index f3d5c4d..681223f 100755
+--- app/code/core/Mage/Captcha/Model/Observer.php
++++ app/code/core/Mage/Captcha/Model/Observer.php
+@@ -65,7 +65,7 @@ class Mage_Captcha_Model_Observer
+         $formId = 'user_login';
+         $captchaModel = Mage::helper('captcha')->getCaptcha($formId);
+         $controller = $observer->getControllerAction();
+-        $loginParams = $controller->getRequest()->getPost('login');
++        $loginParams = $controller->getRequest()->getPost('login', array());
+         $login = array_key_exists('username', $loginParams) ? $loginParams['username'] : null;
+         if ($captchaModel->isRequired($login)) {
+             $word = $this->_getCaptchaString($controller->getRequest(), $formId);

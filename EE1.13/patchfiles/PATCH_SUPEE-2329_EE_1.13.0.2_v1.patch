@@ -1,0 +1,25 @@
+diff --git app/code/core/Enterprise/Catalog/Model/Product/Attribute/Backend/Urlkey.php app/code/core/Enterprise/Catalog/Model/Product/Attribute/Backend/Urlkey.php
+index 80602f5..aef9e15 100644
+--- app/code/core/Enterprise/Catalog/Model/Product/Attribute/Backend/Urlkey.php
++++ app/code/core/Enterprise/Catalog/Model/Product/Attribute/Backend/Urlkey.php
+@@ -170,14 +170,18 @@ class Enterprise_Catalog_Model_Product_Attribute_Backend_Urlkey
+      */
+     protected function _isAvailableUrl($object)
+     {
++        // When product is reassigning to another website (store) URL key can't be copied because it must remain unique
++        if ($object->getOrigData('store_id') != $object->getStoreId()) {
++            return true;
++        }
+         $select = $this->_connection->select()
+             ->from($this->getAttribute()->getBackendTable(), array('entity_id', 'store_id'))
+             ->where('value = ?', $object->getUrlKey())
+             ->limit(1);
+         $row = $this->_connection->fetchRow($select);
+ 
+-        // we should allow save same url key for product in current store view
+-        // but not allow save existing url key in current store view from another store view
++        // Allow re-saving same url key for product in current store view
++        // but prevent saving existing url key in current store view from another store view
+         if (empty($row)) {
+             return true;
+         } elseif ($object->getId() && $object->getStoreId() !== null

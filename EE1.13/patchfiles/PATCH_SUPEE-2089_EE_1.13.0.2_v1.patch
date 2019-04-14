@@ -1,0 +1,34 @@
+diff --git app/code/core/Mage/Sitemap/Model/Sitemap.php app/code/core/Mage/Sitemap/Model/Sitemap.php
+index 2213a4f..734bb91 100644
+--- app/code/core/Mage/Sitemap/Model/Sitemap.php
++++ app/code/core/Mage/Sitemap/Model/Sitemap.php
+@@ -151,11 +151,13 @@ class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
+          */
+         $changefreq = (string)Mage::getStoreConfig('sitemap/category/changefreq', $storeId);
+         $priority   = (string)Mage::getStoreConfig('sitemap/category/priority', $storeId);
++        $urlSuffix  = Mage::helper('catalog/category')->getCategoryUrlSuffix($storeId);
++        $urlSuffix  = ($urlSuffix) ? '.' . $urlSuffix : '';
+         $collection = Mage::getResourceModel('sitemap/catalog_category')->getCollection($storeId);
+         foreach ($collection as $item) {
+             $xml = sprintf(
+                 '<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq><priority>%.1f</priority></url>',
+-                htmlspecialchars($baseUrl . $item->getUrl()),
++                htmlspecialchars($baseUrl . $item->getUrl() . $urlSuffix),
+                 $date,
+                 $changefreq,
+                 $priority
+@@ -169,11 +171,13 @@ class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
+          */
+         $changefreq = (string)Mage::getStoreConfig('sitemap/product/changefreq', $storeId);
+         $priority   = (string)Mage::getStoreConfig('sitemap/product/priority', $storeId);
++        $urlSuffix  = Mage::helper('catalog/product')->getProductUrlSuffix($storeId);
++        $urlSuffix  = ($urlSuffix) ? '.' . $urlSuffix : '';
+         $collection = Mage::getResourceModel('sitemap/catalog_product')->getCollection($storeId);
+         foreach ($collection as $item) {
+             $xml = sprintf(
+                 '<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq><priority>%.1f</priority></url>',
+-                htmlspecialchars($baseUrl . $item->getUrl()),
++                htmlspecialchars($baseUrl . $item->getUrl() . $urlSuffix),
+                 $date,
+                 $changefreq,
+                 $priority
