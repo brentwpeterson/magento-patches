@@ -2,9 +2,9 @@
 root=$(pwd)
 for dir in CE1* EE1*
 do
-	echo 'Reading directory' "$dir"
-	cd "$root"/"$dir"
-	mkdir patchfiles
+    echo 'Reading directory' "$dir"
+    cd "$root"/"$dir"
+    mkdir -p patchfiles
     for i in *.sh
     do
         sed '0,/^__PATCHFILE_FOLLOWS__$/d' "$i" > patchfiles/"${i%.sh}.patch"
