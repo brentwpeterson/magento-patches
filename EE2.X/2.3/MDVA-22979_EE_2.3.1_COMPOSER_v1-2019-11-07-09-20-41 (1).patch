@@ -1,0 +1,177 @@
+diff --git a/vendor/magento/module-email/Block/Adminhtml/Template/Preview.php b/vendor/magento/module-email/Block/Adminhtml/Template/Preview.php
+index 5f22a36510c..7f3fe8e91eb 100644
+--- a/vendor/magento/module-email/Block/Adminhtml/Template/Preview.php
++++ b/vendor/magento/module-email/Block/Adminhtml/Template/Preview.php
+@@ -53,19 +53,26 @@ class Preview extends \Magento\Backend\Block\Widget
+      * Prepare html output
+      *
+      * @return string
++     * @throws \Magento\Framework\Exception\LocalizedException
+      */
+     protected function _toHtml()
+     {
++        $request = $this->getRequest();
++
++        if (!$request instanceof \Magento\Framework\App\RequestSafetyInterface || !$request->isSafeMethod()) {
++            throw new \Magento\Framework\Exception\LocalizedException(__('Wrong request.'));
++        }
++
+         $storeId = $this->getAnyStoreView()->getId();
+         /** @var $template \Magento\Email\Model\Template */
+         $template = $this->_emailFactory->create();
+ 
+-        if ($id = (int)$this->getRequest()->getParam('id')) {
++        if ($id = (int)$request->getParam('id')) {
+             $template->load($id);
+         } else {
+-            $template->setTemplateType($this->getRequest()->getParam('type'));
+-            $template->setTemplateText($this->getRequest()->getParam('text'));
+-            $template->setTemplateStyles($this->getRequest()->getParam('styles'));
++            $template->setTemplateType($request->getParam('type'));
++            $template->setTemplateText($request->getParam('text'));
++            $template->setTemplateStyles($request->getParam('styles'));
+         }
+ 
+         $template->setTemplateText($this->_maliciousCode->filter($template->getTemplateText()));
+diff --git a/vendor/magento/module-page-builder/Controller/ContentType/Preview.php b/vendor/magento/module-page-builder/Controller/ContentType/Preview.php
+index b7d59ecc8..09f8e8510 100644
+--- a/vendor/magento/module-page-builder/Controller/ContentType/Preview.php
++++ b/vendor/magento/module-page-builder/Controller/ContentType/Preview.php
+@@ -26,19 +26,28 @@ class Preview extends \Magento\Framework\App\Action\Action implements HttpPostAc
+      */
+     private $rendererPool;
+ 
++    /**
++     * @var \Magento\Backend\Model\Auth
++     */
++    private $auth;
++
+     /**
+      * Constructor
+      *
+      * @param \Magento\Backend\App\Action\Context $context
+      * @param \Magento\PageBuilder\Model\Stage\RendererPool $rendererPool
++     * @param \Magento\Backend\Model\Auth $auth
+      */
+     public function __construct(
+         \Magento\Backend\App\Action\Context $context,
+-        \Magento\PageBuilder\Model\Stage\RendererPool $rendererPool
++        \Magento\PageBuilder\Model\Stage\RendererPool $rendererPool,
++        \Magento\Backend\Model\Auth $auth = null
+     ) {
+         parent::__construct($context);
+ 
+         $this->rendererPool = $rendererPool;
++        $this->auth = $auth ?? \Magento\Framework\App\ObjectManager::getInstance()
++            ->get(\Magento\Backend\Model\Auth::class);
+     }
+ 
+     /**
+@@ -48,14 +57,18 @@ class Preview extends \Magento\Framework\App\Action\Action implements HttpPostAc
+      */
+     public function execute()
+     {
+-        $pageResult = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
+-        // Some template filters and directive processors expect this to be called in order to function.
+-        $pageResult->initLayout();
++        if ($this->auth->isLoggedIn()) {
++            $pageResult = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
++            // Some template filters and directive processors expect this to be called in order to function.
++            $pageResult->initLayout();
++
++            $params = $this->getRequest()->getParams();
++            $renderer = $this->rendererPool->getRenderer($params['role']);
++            $result = ['data' => $renderer->render($params)];
+ 
+-        $params = $this->getRequest()->getParams();
+-        $renderer = $this->rendererPool->getRenderer($params['role']);
+-        $result = ['data' => $renderer->render($params)];
++            return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
++        }
+ 
+-        return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
++        $this->_forward('noroute');
+     }
+ }
+diff --git a/vendor/magento/module-page-builder/Model/Stage/Config.php b/vendor/magento/module-page-builder/Model/Stage/Config.php
+index 17288978e..baf3ce106 100644
+--- a/vendor/magento/module-page-builder/Model/Stage/Config.php
++++ b/vendor/magento/module-page-builder/Model/Stage/Config.php
+@@ -135,7 +135,9 @@ class Config
+             'content_types' => $this->getContentTypes(),
+             'stage_config' => $this->data,
+             'media_url' => $this->urlBuilder->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]),
+-            'preview_url' => $this->frontendUrlBuilder->getUrl('pagebuilder/contenttype/preview'),
++            'preview_url' => $this->frontendUrlBuilder
++                ->addSessionParam()
++                ->getUrl('pagebuilder/contenttype/preview'),
+             'column_grid_default' => $this->scopeConfig->getValue(self::XML_PATH_COLUMN_GRID_DEFAULT),
+             'column_grid_max' => $this->scopeConfig->getValue(self::XML_PATH_COLUMN_GRID_MAX),
+             'can_use_inline_editing_on_stage' => $this->isWysiwygProvisionedForEditingOnStage(),
+diff --git a/vendor/magento/module-page-builder/Plugin/Framework/Session/SidResolver.php b/vendor/magento/module-page-builder/Plugin/Framework/Session/SidResolver.php
+new file mode 100644
+index 000000000..a1e9d943a
+--- /dev/null
++++ b/vendor/magento/module-page-builder/Plugin/Framework/Session/SidResolver.php
+@@ -0,0 +1,49 @@
++<?php
++/**
++ * Copyright © Magento, Inc. All rights reserved.
++ * See COPYING.txt for license details.
++ */
++namespace Magento\PageBuilder\Plugin\Framework\Session;
++
++/**
++ * Plugin for SID resolver.
++ */
++class SidResolver
++{
++    /**
++     * @var \Magento\Framework\App\RequestInterface
++     */
++    private $request;
++
++    /**
++     * @param \Magento\Framework\App\RequestInterface $request
++     */
++    public function __construct(
++        \Magento\Framework\App\RequestInterface $request
++    ) {
++        $this->request = $request;
++    }
++
++    /**
++     * Get Sid for pagebuilder preview
++     *
++     * @param \Magento\Framework\Session\SidResolver $subject
++     * @param string|null $result
++     * @param \Magento\Framework\Session\SessionManagerInterface $session
++     *
++     * @return string|null
++     */
++    public function afterGetSid(
++        \Magento\Framework\Session\SidResolver $subject,
++        $result,
++        \Magento\Framework\Session\SessionManagerInterface $session
++    ) {
++        if (strpos($this->request->getPathInfo(), '/pagebuilder/contenttype/preview') === 0) {
++            return $this->request->getQuery(
++                $subject->getSessionIdQueryParam($session)
++            );
++        }
++
++        return $result;
++    }
++}
+diff --git a/vendor/magento/module-page-builder/etc/di.xml b/vendor/magento/module-page-builder/etc/di.xml
+index a147ab1b2..e7374870b 100644
+--- a/vendor/magento/module-page-builder/etc/di.xml
++++ b/vendor/magento/module-page-builder/etc/di.xml
+@@ -140,4 +140,7 @@
+             </argument>
+         </arguments>
+     </type>
++    <type name="Magento\Framework\Session\SidResolver">
++        <plugin name="pagebuilder_preview_sid_resolving" type="Magento\PageBuilder\Plugin\Framework\Session\SidResolver" />
++    </type>
+ </config>
