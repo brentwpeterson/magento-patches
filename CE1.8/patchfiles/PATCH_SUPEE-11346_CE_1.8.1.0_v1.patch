@@ -1,0 +1,38 @@
+diff --git app/code/core/Mage/Adminhtml/Block/Widget/Form.php app/code/core/Mage/Adminhtml/Block/Widget/Form.php
+index 8d956b2e915..cff3d1720b5 100644
+--- app/code/core/Mage/Adminhtml/Block/Widget/Form.php
++++ app/code/core/Mage/Adminhtml/Block/Widget/Form.php
+@@ -190,7 +190,7 @@ class Mage_Adminhtml_Block_Widget_Form extends Mage_Adminhtml_Block_Widget
+                         'label'     => $attribute->getFrontend()->getLabel(),
+                         'class'     => $attribute->getFrontend()->getClass(),
+                         'required'  => $attribute->getIsRequired(),
+-                        'note'      => $attribute->getNote(),
++                        'note'      => $this->escapeHtml($attribute->getNote()),
+                     )
+                 )
+                 ->setEntityAttribute($attribute);
+diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
+index 88b8fc1b539..db9715183d0 100644
+--- app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
++++ app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
+@@ -261,6 +261,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
+             if(!isset($data['apply_to'])) {
+                 $data['apply_to'] = array();
+             }
++            $data['entity_type_id'] = $model->getEntityTypeId();
+ 
+             //filter
+             $data = $this->_filterPostData($data);
+diff --git app/code/core/Mage/Eav/Model/Attribute.php app/code/core/Mage/Eav/Model/Attribute.php
+index 5a2626e277e..4091fe967d8 100644
+--- app/code/core/Mage/Eav/Model/Attribute.php
++++ app/code/core/Mage/Eav/Model/Attribute.php
+@@ -116,7 +116,7 @@ abstract class Mage_Eav_Model_Attribute extends Mage_Eav_Model_Entity_Attribute
+         if (is_array($rules)) {
+             return $rules;
+         } else if (!empty($rules)) {
+-            return unserialize($rules);
++            return Mage::helper('core/unserializeArray')->unserialize($rules);
+         }
+         return array();
+     }

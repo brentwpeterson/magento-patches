@@ -1,0 +1,25 @@
+diff --git app/code/core/Mage/Adminhtml/Block/Widget/Form.php app/code/core/Mage/Adminhtml/Block/Widget/Form.php
+index 403d22cfa27..ca314fcc8d8 100644
+--- app/code/core/Mage/Adminhtml/Block/Widget/Form.php
++++ app/code/core/Mage/Adminhtml/Block/Widget/Form.php
+@@ -190,7 +190,7 @@ class Mage_Adminhtml_Block_Widget_Form extends Mage_Adminhtml_Block_Widget
+                         'label'     => $attribute->getFrontend()->getLabel(),
+                         'class'     => $attribute->getFrontend()->getClass(),
+                         'required'  => $attribute->getIsRequired(),
+-                        'note'      => $attribute->getNote(),
++                        'note'      => $this->escapeHtml($attribute->getNote()),
+                     )
+                 )
+                 ->setEntityAttribute($attribute);
+diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
+index 62e3b4bf60e..1038ed1dfa0 100644
+--- app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
++++ app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
+@@ -278,6 +278,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
+             if(!isset($data['apply_to'])) {
+                 $data['apply_to'] = array();
+             }
++            $data['entity_type_id'] = $model->getEntityTypeId();
+ 
+             //filter
+             $data = $this->_filterPostData($data);
