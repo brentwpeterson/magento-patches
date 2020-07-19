@@ -157,11 +157,11 @@ echo -e "$APPLIED_REVERTED_PATCH_INFO\n$PATCH_APPLY_REVERT_RESULT\n\n" >> "$APPL
 exit 0
 
 
-SUPEE-11155_CE_1934 | CE_1.9.3.4 | v1 | 5aa3eaa95af91dd976872ff464db4129244789cc | Fri Jun 14 21:16:40 2019 +0000 | cd8d728d7d2ee41073a95113e13c1156eea24e7d..HEAD
+SUPEE-11155_CE_1933 | CE_1.9.3.3 | v1 | 41e310df8ed00cb4d4e8e9f7e6107c257d9ed485 | Mon Jul 29 22:20:19 2019 +0000 | 85f5f73bd8051fa9df6fe2d73e7115ec18a45349..HEAD
 
 __PATCHFILE_FOLLOWS__
 diff --git app/Mage.php app/Mage.php
-index 3d58d7a47c5..db5ce6ebe9f 100644
+index 430a9faa04e..2c26e567b00 100644
 --- app/Mage.php
 +++ app/Mage.php
 @@ -813,9 +813,9 @@ final class Mage
@@ -1211,7 +1211,7 @@ index 4936ae73528..78c3b87301a 100644
 +    }
  }
 diff --git app/code/core/Mage/Core/etc/config.xml app/code/core/Mage/Core/etc/config.xml
-index c16d4d37a16..58afa43cc42 100644
+index 66a448115a9..98afa3dd4bf 100644
 --- app/code/core/Mage/Core/etc/config.xml
 +++ app/code/core/Mage/Core/etc/config.xml
 @@ -178,6 +178,22 @@
@@ -1708,54 +1708,3 @@ index ae18f780cec..e47d8dd1a7b 100644
 +    Element.insert($$('body')[0], createdForm.form);
 +    createdForm.form.submit();
 +}
-diff --git lib/phpseclib/PHP/Compat/Function/array_fill.php lib/phpseclib/PHP/Compat/Function/array_fill.php
-index 79b5312aa2d..7eb231a0962 100644
---- lib/phpseclib/PHP/Compat/Function/array_fill.php
-+++ lib/phpseclib/PHP/Compat/Function/array_fill.php
-@@ -14,6 +14,7 @@
-  * @version     $Revision: 1.1 $
-  * @since       PHP 4.2.0
-  */
-+/*
- function php_compat_array_fill($start_index, $num, $value)
- {
-     if ($num <= 0) {
-@@ -39,3 +40,4 @@ if (!function_exists('array_fill')) {
-         return php_compat_array_fill($start_index, $num, $value);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/bcpowmod.php lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-index 4c162b87ef6..0366fef84d4 100644
---- lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-+++ lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-@@ -15,6 +15,7 @@
-  * @since       PHP 5.0.0
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_bcpowmod($x, $y, $modulus, $scale = 0)
- {
-     // Sanity check
-@@ -64,3 +65,4 @@ if (!function_exists('bcpowmod')) {
-         return php_compat_bcpowmod($x, $y, $modulus, $scale);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/str_split.php lib/phpseclib/PHP/Compat/Function/str_split.php
-index 8f5179bc988..607e5ca32c4 100644
---- lib/phpseclib/PHP/Compat/Function/str_split.php
-+++ lib/phpseclib/PHP/Compat/Function/str_split.php
-@@ -12,6 +12,7 @@
-  * @since       PHP 5
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_str_split($string, $split_length = 1)
- {
-     if (!is_scalar($split_length)) {
-@@ -57,3 +58,4 @@ if (!function_exists('str_split')) {
-         return php_compat_str_split($string, $split_length);
-     }
- }
-+*/

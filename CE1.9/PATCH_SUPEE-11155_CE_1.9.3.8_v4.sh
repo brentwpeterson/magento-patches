@@ -157,14 +157,14 @@ echo -e "$APPLIED_REVERTED_PATCH_INFO\n$PATCH_APPLY_REVERT_RESULT\n\n" >> "$APPL
 exit 0
 
 
-SUPEE-11155_CE_1940 | CE_1.9.4.0 | v1 | b8a720bede797e6ae043b4932cebbcc90023b430 | Fri Jun 14 21:16:40 2019 +0000 | b457b1a010769a7ea89e128c2c8bf2e30e3a9706..HEAD
+SUPEE-11155_CE_1938 | CE_1.9.3.8 | v1 | efa072b2b272968186a6ad930a3211dc1fe51b3d | Mon Jul 29 22:19:29 2019 +0000 | e3e0e5ce55c675f298bb3ec3914c096eb0747c9b..HEAD
 
 __PATCHFILE_FOLLOWS__
 diff --git app/Mage.php app/Mage.php
-index 1136f6e9351..eb9e6db3a9e 100644
+index 2ee0900166d..95444a8189d 100644
 --- app/Mage.php
 +++ app/Mage.php
-@@ -816,9 +816,9 @@ final class Mage
+@@ -813,9 +813,9 @@ final class Mage
              ',',
              (string) self::getConfig()->getNode('dev/log/allowedFileExtensions', Mage_Core_Model_Store::DEFAULT_CODE)
          );
@@ -608,7 +608,7 @@ index cc96ddf6df2..b31aca8489b 100644
          if (is_array($value)) {
              unset($value['__empty']);
 diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
-index a18e01ffd23..3119d4bb6d8 100644
+index a8f3875e753..6c2cba7ade2 100644
 --- app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
 @@ -172,6 +172,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
@@ -952,10 +952,10 @@ index d07dabee8ad..2a733a6c4c1 100644
                  } else {
                      $quote->setIsCheckoutCart(true);
 diff --git app/code/core/Mage/Checkout/controllers/OnepageController.php app/code/core/Mage/Checkout/controllers/OnepageController.php
-index 97f62527310..d24bfc20653 100644
+index 0a7744db930..4a3e677bf15 100644
 --- app/code/core/Mage/Checkout/controllers/OnepageController.php
 +++ app/code/core/Mage/Checkout/controllers/OnepageController.php
-@@ -565,7 +565,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
+@@ -562,7 +562,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
       */
      public function saveOrderAction()
      {
@@ -1107,7 +1107,7 @@ index 586dfc01118..5ab100b190d 100644
 +    }
  }
 diff --git app/code/core/Mage/Core/Helper/Data.php app/code/core/Mage/Core/Helper/Data.php
-index f55957a7212..e01b75e75d2 100644
+index 021120dfe57..9f30e7768af 100644
 --- app/code/core/Mage/Core/Helper/Data.php
 +++ app/code/core/Mage/Core/Helper/Data.php
 @@ -254,7 +254,7 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
@@ -1211,7 +1211,7 @@ index 38c53007b70..711ba258320 100644
 +    }
  }
 diff --git app/code/core/Mage/Core/etc/config.xml app/code/core/Mage/Core/etc/config.xml
-index 2e5da43aa4c..2c8a805d1bc 100644
+index ef082bfb4e9..92803da1fbc 100644
 --- app/code/core/Mage/Core/etc/config.xml
 +++ app/code/core/Mage/Core/etc/config.xml
 @@ -178,6 +178,22 @@
@@ -1238,10 +1238,10 @@ index 2e5da43aa4c..2c8a805d1bc 100644
      </global>
      <frontend>
 diff --git app/code/core/Mage/Core/functions.php app/code/core/Mage/Core/functions.php
-index 1bdb70d0a6a..02c48e14e15 100644
+index f2daa922a7e..f0c7f670503 100644
 --- app/code/core/Mage/Core/functions.php
 +++ app/code/core/Mage/Core/functions.php
-@@ -397,3 +397,19 @@ if (!function_exists('hash_equals')) {
+@@ -410,3 +410,19 @@ if (!function_exists('hash_equals')) {
          return 0 === $result;
      }
  }
@@ -1569,7 +1569,7 @@ index 0dfd0231c62..f9198129ad3 100644
                              <br /><span class="old-rate"><?php echo $this->__('Old rate:') ?> <?php echo $_oldRates[$_currencyCode][$_rate] ?></span>
                              <?php endif; ?>
 diff --git app/locale/en_US/Mage_Adminhtml.csv app/locale/en_US/Mage_Adminhtml.csv
-index 08b087b7e17..fb5f3a98fd3 100644
+index 4c7861a81c2..5afd4fcdee2 100644
 --- app/locale/en_US/Mage_Adminhtml.csv
 +++ app/locale/en_US/Mage_Adminhtml.csv
 @@ -41,7 +41,7 @@
@@ -1589,7 +1589,7 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "Currency Information","Currency Information"
  "Currency Setup Section","Currency Setup Section"
  "Current Admin Password","Current Admin Password"
-@@ -936,6 +937,7 @@
+@@ -935,6 +936,7 @@
  "Self-assigned roles cannot be deleted.","Self-assigned roles cannot be deleted."
  "Sender","Sender"
  "Separate Email","Separate Email"
@@ -1597,7 +1597,7 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "Shipment #%s comment added","Shipment #%s comment added"
  "Shipment #%s created","Shipment #%s created"
  "Shipment Comments","Shipment Comments"
-@@ -1055,6 +1057,7 @@
+@@ -1054,6 +1056,7 @@
  "The email address is empty.","The email address is empty."
  "The email template has been deleted.","The email template has been deleted."
  "The email template has been saved.","The email template has been saved."
@@ -1606,7 +1606,7 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "The group node name must be specified with field node name.","The group node name must be specified with field node name."
  "The image cache was cleaned.","The image cache was cleaned."
 diff --git app/locale/en_US/Mage_Core.csv app/locale/en_US/Mage_Core.csv
-index 00e6f8f601f..f1a1fd4f43f 100644
+index c728e196d13..6b4484646d7 100644
 --- app/locale/en_US/Mage_Core.csv
 +++ app/locale/en_US/Mage_Core.csv
 @@ -58,6 +58,7 @@
@@ -1708,54 +1708,3 @@ index c0207adee9f..cbdd3e7e8b9 100644
 +    Element.insert($$('body')[0], createdForm.form);
 +    createdForm.form.submit();
 +}
-diff --git lib/phpseclib/PHP/Compat/Function/array_fill.php lib/phpseclib/PHP/Compat/Function/array_fill.php
-index 79b5312aa2d..7eb231a0962 100644
---- lib/phpseclib/PHP/Compat/Function/array_fill.php
-+++ lib/phpseclib/PHP/Compat/Function/array_fill.php
-@@ -14,6 +14,7 @@
-  * @version     $Revision: 1.1 $
-  * @since       PHP 4.2.0
-  */
-+/*
- function php_compat_array_fill($start_index, $num, $value)
- {
-     if ($num <= 0) {
-@@ -39,3 +40,4 @@ if (!function_exists('array_fill')) {
-         return php_compat_array_fill($start_index, $num, $value);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/bcpowmod.php lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-index 4c162b87ef6..0366fef84d4 100644
---- lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-+++ lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-@@ -15,6 +15,7 @@
-  * @since       PHP 5.0.0
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_bcpowmod($x, $y, $modulus, $scale = 0)
- {
-     // Sanity check
-@@ -64,3 +65,4 @@ if (!function_exists('bcpowmod')) {
-         return php_compat_bcpowmod($x, $y, $modulus, $scale);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/str_split.php lib/phpseclib/PHP/Compat/Function/str_split.php
-index 8f5179bc988..607e5ca32c4 100644
---- lib/phpseclib/PHP/Compat/Function/str_split.php
-+++ lib/phpseclib/PHP/Compat/Function/str_split.php
-@@ -12,6 +12,7 @@
-  * @since       PHP 5
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_str_split($string, $split_length = 1)
- {
-     if (!is_scalar($split_length)) {
-@@ -57,3 +58,4 @@ if (!function_exists('str_split')) {
-         return php_compat_str_split($string, $split_length);
-     }
- }
-+*/
