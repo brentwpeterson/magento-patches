@@ -157,11 +157,11 @@ echo -e "$APPLIED_REVERTED_PATCH_INFO\n$PATCH_APPLY_REVERT_RESULT\n\n" >> "$APPL
 exit 0
 
 
-SUPEE-11155_CE_1936 | CE_1.9.3.6 | v1 | 137ba2ca5e8c07fdc0ead1bcb54f99aec050b1a8 | Fri Jun 14 21:16:40 2019 +0000 | 1d367e184bd6dc2c84162364ee103a94a83f753c..HEAD
+SUPEE-11155_CE_1937 | CE_1.9.3.7 | v1 | 278b315dff9dff7bc717d2d6588746d473251247 | Mon Jul 29 22:19:41 2019 +0000 | 2d587a699f7d66d6feaaad2335cc7d83b606b3f7..HEAD
 
 __PATCHFILE_FOLLOWS__
 diff --git app/Mage.php app/Mage.php
-index 354d0ac3532..f28655d05cd 100644
+index ddaac6516c7..af1d814d786 100644
 --- app/Mage.php
 +++ app/Mage.php
 @@ -813,9 +813,9 @@ final class Mage
@@ -1569,10 +1569,10 @@ index 708a661e641..1ad9ebf12f1 100644
                              <br /><span class="old-rate"><?php echo $this->__('Old rate:') ?> <?php echo $_oldRates[$_currencyCode][$_rate] ?></span>
                              <?php endif; ?>
 diff --git app/locale/en_US/Mage_Adminhtml.csv app/locale/en_US/Mage_Adminhtml.csv
-index eb7a4a40f19..0c040d55f3b 100644
+index 772191dcf15..397c4741db9 100644
 --- app/locale/en_US/Mage_Adminhtml.csv
 +++ app/locale/en_US/Mage_Adminhtml.csv
-@@ -42,7 +42,7 @@
+@@ -41,7 +41,7 @@
  "<h1 class=""page-heading"">404 Error</h1><p>Page not found.</p>","<h1 class=""page-heading"">404 Error</h1><p>Page not found.</p>"
  "<strong>%s</strong> requests access to your account","<strong>%s</strong> requests access to your account"
  "<strong>Attention</strong>: Captcha is case sensitive.","<strong>Attention</strong>: Captcha is case sensitive."
@@ -1581,7 +1581,7 @@ index eb7a4a40f19..0c040d55f3b 100644
  "API Key","API Key"
  "API Key Confirmation","API Key Confirmation"
  "ASCII","ASCII"
-@@ -271,6 +271,7 @@
+@@ -270,6 +270,7 @@
  "Credit memo\'s total must be positive.","Credit memo\'s total must be positive."
  "Currency","Currency"
  "Currency ""%s"" is used as %s in %s.","Currency ""%s"" is used as %s in %s."
@@ -1606,7 +1606,7 @@ index eb7a4a40f19..0c040d55f3b 100644
  "The group node name must be specified with field node name.","The group node name must be specified with field node name."
  "The image cache was cleaned.","The image cache was cleaned."
 diff --git app/locale/en_US/Mage_Core.csv app/locale/en_US/Mage_Core.csv
-index 81c185d0e4e..7d8ee032cac 100644
+index c728e196d13..6b4484646d7 100644
 --- app/locale/en_US/Mage_Core.csv
 +++ app/locale/en_US/Mage_Core.csv
 @@ -58,6 +58,7 @@
@@ -1708,54 +1708,3 @@ index ae18f780cec..e47d8dd1a7b 100644
 +    Element.insert($$('body')[0], createdForm.form);
 +    createdForm.form.submit();
 +}
-diff --git lib/phpseclib/PHP/Compat/Function/array_fill.php lib/phpseclib/PHP/Compat/Function/array_fill.php
-index 79b5312aa2d..7eb231a0962 100644
---- lib/phpseclib/PHP/Compat/Function/array_fill.php
-+++ lib/phpseclib/PHP/Compat/Function/array_fill.php
-@@ -14,6 +14,7 @@
-  * @version     $Revision: 1.1 $
-  * @since       PHP 4.2.0
-  */
-+/*
- function php_compat_array_fill($start_index, $num, $value)
- {
-     if ($num <= 0) {
-@@ -39,3 +40,4 @@ if (!function_exists('array_fill')) {
-         return php_compat_array_fill($start_index, $num, $value);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/bcpowmod.php lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-index 4c162b87ef6..0366fef84d4 100644
---- lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-+++ lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-@@ -15,6 +15,7 @@
-  * @since       PHP 5.0.0
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_bcpowmod($x, $y, $modulus, $scale = 0)
- {
-     // Sanity check
-@@ -64,3 +65,4 @@ if (!function_exists('bcpowmod')) {
-         return php_compat_bcpowmod($x, $y, $modulus, $scale);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/str_split.php lib/phpseclib/PHP/Compat/Function/str_split.php
-index 8f5179bc988..607e5ca32c4 100644
---- lib/phpseclib/PHP/Compat/Function/str_split.php
-+++ lib/phpseclib/PHP/Compat/Function/str_split.php
-@@ -12,6 +12,7 @@
-  * @since       PHP 5
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_str_split($string, $split_length = 1)
- {
-     if (!is_scalar($split_length)) {
-@@ -57,3 +58,4 @@ if (!function_exists('str_split')) {
-         return php_compat_str_split($string, $split_length);
-     }
- }
-+*/

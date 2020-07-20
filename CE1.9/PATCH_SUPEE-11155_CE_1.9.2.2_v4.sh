@@ -157,14 +157,14 @@ echo -e "$APPLIED_REVERTED_PATCH_INFO\n$PATCH_APPLY_REVERT_RESULT\n\n" >> "$APPL
 exit 0
 
 
-SUPEE-11155_CE_1941 | CE_1.9.4.1 | v1 | 8038bdd8b74be213c7d0d2d554482a7f65457fe8 | Fri Jun 14 21:16:40 2019 +0000 | 3e5a308a990e31e012794982488c882347acc47a..HEAD
+SUPEE-11155_CE_1922 | CE_1.9.2.2 | v1 | 358d85df124592e72430a25c10ec5bc15f4e291e | Mon Jul 29 22:18:29 2019 +0000 | 8ef212b9baf4c0f1416613858e4c82da0354e292..HEAD
 
 __PATCHFILE_FOLLOWS__
 diff --git app/Mage.php app/Mage.php
-index 89b63ed6767..327e92860a6 100644
+index 93732469a39..e2cf6255a10 100644
 --- app/Mage.php
 +++ app/Mage.php
-@@ -816,9 +816,9 @@ final class Mage
+@@ -813,9 +813,9 @@ final class Mage
              ',',
              (string) self::getConfig()->getNode('dev/log/allowedFileExtensions', Mage_Core_Model_Store::DEFAULT_CODE)
          );
@@ -177,7 +177,7 @@ index 89b63ed6767..327e92860a6 100644
          }
  
 diff --git app/code/core/Mage/Admin/Model/Block.php app/code/core/Mage/Admin/Model/Block.php
-index ba329cba205..c2ad8edc076 100644
+index eb91cafc667..bbb727bad6f 100644
 --- app/code/core/Mage/Admin/Model/Block.php
 +++ app/code/core/Mage/Admin/Model/Block.php
 @@ -57,7 +57,7 @@ class Mage_Admin_Model_Block extends Mage_Core_Model_Abstract
@@ -190,7 +190,7 @@ index ba329cba205..c2ad8edc076 100644
          }
  
 diff --git app/code/core/Mage/Admin/Model/User.php app/code/core/Mage/Admin/Model/User.php
-index eac448a7654..c6511950358 100644
+index 82f1f052c5c..7aa5b690734 100644
 --- app/code/core/Mage/Admin/Model/User.php
 +++ app/code/core/Mage/Admin/Model/User.php
 @@ -590,7 +590,7 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
@@ -203,7 +203,7 @@ index eac448a7654..c6511950358 100644
  
          if (count($errors) === 0) {
 diff --git app/code/core/Mage/AdminNotification/etc/system.xml app/code/core/Mage/AdminNotification/etc/system.xml
-index cd9e2b6b771..9e763d0c1ed 100644
+index b61b4bed7fa..ba82eb7c1b0 100644
 --- app/code/core/Mage/AdminNotification/etc/system.xml
 +++ app/code/core/Mage/AdminNotification/etc/system.xml
 @@ -64,6 +64,15 @@
@@ -223,7 +223,7 @@ index cd9e2b6b771..9e763d0c1ed 100644
                  </adminnotification>
              </groups>
 diff --git app/code/core/Mage/Adminhtml/Block/Api/Role/Grid/User.php app/code/core/Mage/Adminhtml/Block/Api/Role/Grid/User.php
-index 7fa0f727569..8c2fd659fd1 100644
+index 574caca04bc..ad78aa0a382 100644
 --- app/code/core/Mage/Adminhtml/Block/Api/Role/Grid/User.php
 +++ app/code/core/Mage/Adminhtml/Block/Api/Role/Grid/User.php
 @@ -157,7 +157,7 @@ class Mage_Adminhtml_Block_Api_Role_Grid_User extends Mage_Adminhtml_Block_Widge
@@ -236,7 +236,7 @@ index 7fa0f727569..8c2fd659fd1 100644
          $roleId = ( $this->getRequest()->getParam('rid') > 0 ) ? $this->getRequest()->getParam('rid') : Mage::registry('RID');
          $users  = Mage::getModel('api/roles')->setId($roleId)->getRoleUsers();
 diff --git app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php
-index e1c2df9407f..1c9b3f1e21a 100644
+index ef996146cba..0d1e452e16e 100644
 --- app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php
 +++ app/code/core/Mage/Adminhtml/Block/Catalog/Product/Edit/Tab/Super/Config.php
 @@ -155,6 +155,8 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
@@ -249,7 +249,7 @@ index e1c2df9407f..1c9b3f1e21a 100644
                      foreach ($attribute['values'] as &$attributeValue) {
                          if (!$this->getCanReadPrice()) {
 diff --git app/code/core/Mage/Adminhtml/Block/Newsletter/Queue/Preview.php app/code/core/Mage/Adminhtml/Block/Newsletter/Queue/Preview.php
-index ea78d5419f3..ff437b30652 100644
+index ee9f3c2d0d5..4c92aba0462 100644
 --- app/code/core/Mage/Adminhtml/Block/Newsletter/Queue/Preview.php
 +++ app/code/core/Mage/Adminhtml/Block/Newsletter/Queue/Preview.php
 @@ -50,6 +50,12 @@ class Mage_Adminhtml_Block_Newsletter_Queue_Preview extends Mage_Adminhtml_Block
@@ -266,7 +266,7 @@ index ea78d5419f3..ff437b30652 100644
          $storeId = (int)$this->getRequest()->getParam('store_id');
          if(!$storeId) {
 diff --git app/code/core/Mage/Adminhtml/Block/Newsletter/Template/Preview.php app/code/core/Mage/Adminhtml/Block/Newsletter/Template/Preview.php
-index 2eeda67f1de..fb580619ec6 100644
+index 41e9bd7842b..854177bda6c 100644
 --- app/code/core/Mage/Adminhtml/Block/Newsletter/Template/Preview.php
 +++ app/code/core/Mage/Adminhtml/Block/Newsletter/Template/Preview.php
 @@ -46,6 +46,12 @@ class Mage_Adminhtml_Block_Newsletter_Template_Preview extends Mage_Adminhtml_Bl
@@ -283,7 +283,7 @@ index 2eeda67f1de..fb580619ec6 100644
          $storeId = (int)$this->getRequest()->getParam('store_id');
          if(!$storeId) {
 diff --git app/code/core/Mage/Adminhtml/Block/Permissions/Role/Grid/User.php app/code/core/Mage/Adminhtml/Block/Permissions/Role/Grid/User.php
-index 159773d347f..3b0a668aade 100644
+index 075cedfa239..b26872acd01 100644
 --- app/code/core/Mage/Adminhtml/Block/Permissions/Role/Grid/User.php
 +++ app/code/core/Mage/Adminhtml/Block/Permissions/Role/Grid/User.php
 @@ -157,7 +157,7 @@ class Mage_Adminhtml_Block_Permissions_Role_Grid_User extends Mage_Adminhtml_Blo
@@ -296,7 +296,7 @@ index 159773d347f..3b0a668aade 100644
          $roleId = ( $this->getRequest()->getParam('rid') > 0 ) ? $this->getRequest()->getParam('rid') : Mage::registry('RID');
          $users  = Mage::getModel('admin/roles')->setId($roleId)->getRoleUsers();
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Creditmemo/Grid.php app/code/core/Mage/Adminhtml/Block/Sales/Creditmemo/Grid.php
-index d81c515c841..4c0001f271e 100644
+index b5dc1876a9c..856f90d42a1 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Creditmemo/Grid.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Creditmemo/Grid.php
 @@ -76,6 +76,7 @@ class Mage_Adminhtml_Block_Sales_Creditmemo_Grid extends Mage_Adminhtml_Block_Wi
@@ -308,7 +308,7 @@ index d81c515c841..4c0001f271e 100644
  
          $this->addColumn('order_created_at', array(
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Invoice/Grid.php app/code/core/Mage/Adminhtml/Block/Sales/Invoice/Grid.php
-index c8a6598c76e..59c38a1e3bc 100644
+index 8890db76441..04ab6f5f4bf 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Invoice/Grid.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Invoice/Grid.php
 @@ -77,6 +77,7 @@ class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widge
@@ -320,7 +320,7 @@ index c8a6598c76e..59c38a1e3bc 100644
  
          $this->addColumn('order_created_at', array(
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Order/Create/Header.php app/code/core/Mage/Adminhtml/Block/Sales/Order/Create/Header.php
-index 9b18cba2ef2..169c8d618f5 100644
+index 3b8778d4f99..fdb640130a6 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Order/Create/Header.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Order/Create/Header.php
 @@ -34,7 +34,10 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Header extends Mage_Adminhtml_Bloc
@@ -336,7 +336,7 @@ index 9b18cba2ef2..169c8d618f5 100644
  
          $customerId = $this->getCustomerId();
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Order/Creditmemo/Create.php app/code/core/Mage/Adminhtml/Block/Sales/Order/Creditmemo/Create.php
-index e1e1c5b5ce0..a742055279d 100644
+index 5cfbffa7c0e..4f8a35675a9 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Order/Creditmemo/Create.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Order/Creditmemo/Create.php
 @@ -67,10 +67,15 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create extends Mage_Adminhtml_
@@ -360,7 +360,7 @@ index e1e1c5b5ce0..a742055279d 100644
  
          return $header;
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Order/Grid.php app/code/core/Mage/Adminhtml/Block/Sales/Order/Grid.php
-index 43ba9cd9f72..97877477976 100644
+index e861ddc0142..51da9929153 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Order/Grid.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Order/Grid.php
 @@ -65,10 +65,11 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
@@ -380,7 +380,7 @@ index 43ba9cd9f72..97877477976 100644
  
          if (!Mage::app()->isSingleStoreMode()) {
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Order/Invoice/Create.php app/code/core/Mage/Adminhtml/Block/Sales/Order/Invoice/Create.php
-index b3a152d7972..3528bebd70c 100644
+index b8fb98e95cc..5fbbe52cc98 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Order/Invoice/Create.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Order/Invoice/Create.php
 @@ -64,8 +64,14 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_Create extends Mage_Adminhtml_Blo
@@ -401,7 +401,7 @@ index b3a152d7972..3528bebd70c 100644
  
      /**
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Order/Shipment/Create.php app/code/core/Mage/Adminhtml/Block/Sales/Order/Shipment/Create.php
-index e39ee02e57f..21e581a87cf 100644
+index a84e28cf623..27642112982 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Order/Shipment/Create.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Order/Shipment/Create.php
 @@ -59,7 +59,10 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_Create extends Mage_Adminhtml_Bl
@@ -417,7 +417,7 @@ index e39ee02e57f..21e581a87cf 100644
      }
  
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Order/View.php app/code/core/Mage/Adminhtml/Block/Sales/Order/View.php
-index 0af75c74930..ea97b9890d2 100644
+index d32c3344ca3..38da4471235 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Order/View.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Order/View.php
 @@ -315,6 +315,16 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
@@ -438,7 +438,7 @@ index 0af75c74930..ea97b9890d2 100644
  //    /**
  //     * Return URL for accept payment action
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Shipment/Grid.php app/code/core/Mage/Adminhtml/Block/Sales/Shipment/Grid.php
-index 0676cb14263..10324e57613 100644
+index 5e4b1a71f6d..ba71a8ca171 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Shipment/Grid.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Shipment/Grid.php
 @@ -88,6 +88,7 @@ class Mage_Adminhtml_Block_Sales_Shipment_Grid extends Mage_Adminhtml_Block_Widg
@@ -450,7 +450,7 @@ index 0676cb14263..10324e57613 100644
  
          $this->addColumn('order_created_at', array(
 diff --git app/code/core/Mage/Adminhtml/Block/Sales/Transactions/Grid.php app/code/core/Mage/Adminhtml/Block/Sales/Transactions/Grid.php
-index cc107f68fec..5559512c70d 100644
+index f9a70a5ba91..f673613a9b7 100644
 --- app/code/core/Mage/Adminhtml/Block/Sales/Transactions/Grid.php
 +++ app/code/core/Mage/Adminhtml/Block/Sales/Transactions/Grid.php
 @@ -82,7 +82,8 @@ class Mage_Adminhtml_Block_Sales_Transactions_Grid extends Mage_Adminhtml_Block_
@@ -464,7 +464,7 @@ index cc107f68fec..5559512c70d 100644
  
          $this->addColumn('txn_id', array(
 diff --git app/code/core/Mage/Adminhtml/Block/System/Email/Template/Preview.php app/code/core/Mage/Adminhtml/Block/System/Email/Template/Preview.php
-index 4b02ec03e96..03b732bf20f 100644
+index 5ed151dcd54..cf85b1c616d 100644
 --- app/code/core/Mage/Adminhtml/Block/System/Email/Template/Preview.php
 +++ app/code/core/Mage/Adminhtml/Block/System/Email/Template/Preview.php
 @@ -58,11 +58,12 @@ class Mage_Adminhtml_Block_System_Email_Template_Preview extends Mage_Adminhtml_
@@ -484,7 +484,7 @@ index 4b02ec03e96..03b732bf20f 100644
  
          Varien_Profiler::start("email_template_proccessing");
 diff --git app/code/core/Mage/Adminhtml/Block/Template.php app/code/core/Mage/Adminhtml/Block/Template.php
-index 08201f1a316..5629a4b9b5c 100644
+index 04c551dde37..1ea94937f0a 100644
 --- app/code/core/Mage/Adminhtml/Block/Template.php
 +++ app/code/core/Mage/Adminhtml/Block/Template.php
 @@ -80,4 +80,15 @@ class Mage_Adminhtml_Block_Template extends Mage_Core_Block_Template
@@ -504,7 +504,7 @@ index 08201f1a316..5629a4b9b5c 100644
 +    }
  }
 diff --git app/code/core/Mage/Adminhtml/Block/Widget/Grid/Column/Renderer/Abstract.php app/code/core/Mage/Adminhtml/Block/Widget/Grid/Column/Renderer/Abstract.php
-index e884e05cff1..05ce8fdc843 100644
+index ac8edc1b495..901850feaca 100644
 --- app/code/core/Mage/Adminhtml/Block/Widget/Grid/Column/Renderer/Abstract.php
 +++ app/code/core/Mage/Adminhtml/Block/Widget/Grid/Column/Renderer/Abstract.php
 @@ -114,9 +114,9 @@ abstract class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
@@ -520,7 +520,7 @@ index e884e05cff1..05ce8fdc843 100644
          return $out;
      }
 diff --git app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php
-index 513fc9c3b77..2a160e9d52e 100644
+index fcee7dfd4e1..88e6f3176d0 100644
 --- app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php
 +++ app/code/core/Mage/Adminhtml/Model/LayoutUpdate/Validator.php
 @@ -180,8 +180,11 @@ class Mage_Adminhtml_Model_LayoutUpdate_Validator extends Zend_Validate_Abstract
@@ -538,7 +538,7 @@ index 513fc9c3b77..2a160e9d52e 100644
          return $xpath;
      }
 diff --git app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Baseurl.php app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Baseurl.php
-index 55537c27b44..7247bf98d72 100644
+index 2334bd917f3..0d1a2604232 100644
 --- app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Baseurl.php
 +++ app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Baseurl.php
 @@ -36,6 +36,8 @@ class Mage_Adminhtml_Model_System_Config_Backend_Baseurl extends Mage_Core_Model
@@ -551,7 +551,7 @@ index 55537c27b44..7247bf98d72 100644
          }
  
 diff --git app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Locale.php app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Locale.php
-index 9ec0be200d2..04dcfd81348 100644
+index f5b52a56e7d..1d2c949ae94 100644
 --- app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Locale.php
 +++ app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Locale.php
 @@ -34,6 +34,27 @@
@@ -583,7 +583,7 @@ index 9ec0be200d2..04dcfd81348 100644
      /**
       * Enter description here...
 diff --git app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Serialized/Array.php app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Serialized/Array.php
-index fef80eadac6..a4529e42c4b 100644
+index 78a4019e344..ceb56e27154 100644
 --- app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Serialized/Array.php
 +++ app/code/core/Mage/Adminhtml/Model/System/Config/Backend/Serialized/Array.php
 @@ -31,11 +31,19 @@
@@ -608,10 +608,10 @@ index fef80eadac6..a4529e42c4b 100644
          if (is_array($value)) {
              unset($value['__empty']);
 diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
-index 43cf415a701..c390a873e9a 100644
+index 6ec29f29f97..b83998f0342 100644
 --- app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Catalog/Product/AttributeController.php
-@@ -172,6 +172,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
+@@ -157,6 +157,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
              /** @var $helperCatalog Mage_Catalog_Helper_Data */
              $helperCatalog = Mage::helper('catalog');
              //labels
@@ -620,7 +620,7 @@ index 43cf415a701..c390a873e9a 100644
                  if ($value) {
                      $value = $helperCatalog->stripTags($value);
 diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/Product/ReviewController.php app/code/core/Mage/Adminhtml/controllers/Catalog/Product/ReviewController.php
-index 4e5a97a415c..1976d3aba19 100644
+index e28f486093a..9c44db54a36 100644
 --- app/code/core/Mage/Adminhtml/controllers/Catalog/Product/ReviewController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Catalog/Product/ReviewController.php
 @@ -41,6 +41,17 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
@@ -642,7 +642,7 @@ index 4e5a97a415c..1976d3aba19 100644
      {
          $this->_title($this->__('Catalog'))
 diff --git app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php
-index a38dd91f03e..264f7f3d804 100644
+index c7823114b69..d85a5ca0d0b 100644
 --- app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Catalog/ProductController.php
 @@ -550,7 +550,7 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
@@ -655,7 +655,7 @@ index a38dd91f03e..264f7f3d804 100644
              $response->setError(true);
              $response->setMessage($e->getMessage());
 diff --git app/code/core/Mage/Adminhtml/controllers/Checkout/AgreementController.php app/code/core/Mage/Adminhtml/controllers/Checkout/AgreementController.php
-index 98afaa24008..8eaa1642fc7 100644
+index 52f33a7af19..bfba90c8b35 100644
 --- app/code/core/Mage/Adminhtml/controllers/Checkout/AgreementController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Checkout/AgreementController.php
 @@ -33,6 +33,17 @@
@@ -677,7 +677,7 @@ index 98afaa24008..8eaa1642fc7 100644
      {
          $this->_title($this->__('Sales'))->_title($this->__('Terms and Conditions'));
 diff --git app/code/core/Mage/Adminhtml/controllers/Newsletter/TemplateController.php app/code/core/Mage/Adminhtml/controllers/Newsletter/TemplateController.php
-index ed546c5210e..c28df8c1928 100644
+index 22a893ae9c2..40988b5c476 100644
 --- app/code/core/Mage/Adminhtml/controllers/Newsletter/TemplateController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Newsletter/TemplateController.php
 @@ -167,6 +167,11 @@ class Mage_Adminhtml_Newsletter_TemplateController extends Mage_Adminhtml_Contro
@@ -693,7 +693,7 @@ index ed546c5210e..c28df8c1928 100644
                  ->setTemplateSubject($request->getParam('subject'))
                  ->setTemplateCode($request->getParam('code'))
 diff --git app/code/core/Mage/Adminhtml/controllers/Promo/CatalogController.php app/code/core/Mage/Adminhtml/controllers/Promo/CatalogController.php
-index 9962530a8ad..1156592c362 100644
+index 90ceb91875f..e2193b3270c 100644
 --- app/code/core/Mage/Adminhtml/controllers/Promo/CatalogController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Promo/CatalogController.php
 @@ -133,6 +133,9 @@ class Mage_Adminhtml_Promo_CatalogController extends Mage_Adminhtml_Controller_A
@@ -707,7 +707,7 @@ index 9962530a8ad..1156592c362 100644
                  if ($id = $this->getRequest()->getParam('rule_id')) {
                      $model->load($id);
 diff --git app/code/core/Mage/Adminhtml/controllers/Promo/QuoteController.php app/code/core/Mage/Adminhtml/controllers/Promo/QuoteController.php
-index e9b61cb1f0e..28c77cb832f 100644
+index 964c1fa96d3..43a821642f4 100644
 --- app/code/core/Mage/Adminhtml/controllers/Promo/QuoteController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Promo/QuoteController.php
 @@ -133,6 +133,9 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
@@ -721,7 +721,7 @@ index e9b61cb1f0e..28c77cb832f 100644
                  $id = $this->getRequest()->getParam('rule_id');
                  if ($id) {
 diff --git app/code/core/Mage/Adminhtml/controllers/Sales/Order/CreateController.php app/code/core/Mage/Adminhtml/controllers/Sales/Order/CreateController.php
-index 5ac307901c9..c8ee9a9915b 100644
+index ab11e962495..2e9a235f5ef 100644
 --- app/code/core/Mage/Adminhtml/controllers/Sales/Order/CreateController.php
 +++ app/code/core/Mage/Adminhtml/controllers/Sales/Order/CreateController.php
 @@ -151,6 +151,13 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
@@ -760,7 +760,7 @@ index 5ac307901c9..c8ee9a9915b 100644
              $paymentData = $this->getRequest()->getPost('payment');
              if ($paymentData) {
 diff --git app/code/core/Mage/Adminhtml/controllers/SitemapController.php app/code/core/Mage/Adminhtml/controllers/SitemapController.php
-index 9aba874d1a1..ec41ff12322 100644
+index af1874a6c7c..14db52c3907 100644
 --- app/code/core/Mage/Adminhtml/controllers/SitemapController.php
 +++ app/code/core/Mage/Adminhtml/controllers/SitemapController.php
 @@ -33,6 +33,11 @@
@@ -796,7 +796,7 @@ index 9aba874d1a1..ec41ff12322 100644
                  $validator = Mage::getModel('core/file_validator_availablePath');
                  /** @var $helper Mage_Adminhtml_Helper_Catalog */
 diff --git app/code/core/Mage/Adminhtml/controllers/System/Email/TemplateController.php app/code/core/Mage/Adminhtml/controllers/System/Email/TemplateController.php
-index 2bd9f964bba..4e3de6cbbe6 100644
+index 217ca456765..f0af424e0c2 100644
 --- app/code/core/Mage/Adminhtml/controllers/System/Email/TemplateController.php
 +++ app/code/core/Mage/Adminhtml/controllers/System/Email/TemplateController.php
 @@ -111,6 +111,8 @@ class Mage_Adminhtml_System_Email_TemplateController extends Mage_Adminhtml_Cont
@@ -821,12 +821,12 @@ index 2bd9f964bba..4e3de6cbbe6 100644
                  ->setTemplateCode($request->getParam('template_code'))
                  ->setTemplateText($request->getParam('template_text'))
 diff --git app/code/core/Mage/Catalog/Helper/Product.php app/code/core/Mage/Catalog/Helper/Product.php
-index e9c0146df67..b62e34daca5 100644
+index 273f7bdfe7c..0fada70a992 100644
 --- app/code/core/Mage/Catalog/Helper/Product.php
 +++ app/code/core/Mage/Catalog/Helper/Product.php
-@@ -525,4 +525,41 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
- 
-         return $qty;
+@@ -485,4 +485,41 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
+     {
+         return $this->_skipSaleableCheck;
      }
 +
 +    /**
@@ -867,7 +867,7 @@ index e9c0146df67..b62e34daca5 100644
 +    }
  }
 diff --git app/code/core/Mage/Catalog/controllers/Product/CompareController.php app/code/core/Mage/Catalog/controllers/Product/CompareController.php
-index 2be9c5298d3..0984c2b7904 100644
+index b25d0218648..741f996faa0 100644
 --- app/code/core/Mage/Catalog/controllers/Product/CompareController.php
 +++ app/code/core/Mage/Catalog/controllers/Product/CompareController.php
 @@ -80,7 +80,7 @@ class Mage_Catalog_Product_CompareController extends Mage_Core_Controller_Front_
@@ -906,7 +906,7 @@ index 2be9c5298d3..0984c2b7904 100644
 +    }
  }
 diff --git app/code/core/Mage/Checkout/Model/Session.php app/code/core/Mage/Checkout/Model/Session.php
-index fc99aa61bdc..dded46610c3 100644
+index 7a4bdabcc27..e5e12e8a2a0 100644
 --- app/code/core/Mage/Checkout/Model/Session.php
 +++ app/code/core/Mage/Checkout/Model/Session.php
 @@ -120,13 +120,21 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
@@ -952,10 +952,10 @@ index fc99aa61bdc..dded46610c3 100644
                  } else {
                      $quote->setIsCheckoutCart(true);
 diff --git app/code/core/Mage/Checkout/controllers/OnepageController.php app/code/core/Mage/Checkout/controllers/OnepageController.php
-index 1e122fac7b9..861b9207336 100644
+index ee0cf0a6b53..dd54f96a37b 100644
 --- app/code/core/Mage/Checkout/controllers/OnepageController.php
 +++ app/code/core/Mage/Checkout/controllers/OnepageController.php
-@@ -565,7 +565,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
+@@ -563,7 +563,7 @@ class Mage_Checkout_OnepageController extends Mage_Checkout_Controller_Action
       */
      public function saveOrderAction()
      {
@@ -965,7 +965,7 @@ index 1e122fac7b9..861b9207336 100644
              return;
          }
 diff --git app/code/core/Mage/Cms/Helper/Data.php app/code/core/Mage/Cms/Helper/Data.php
-index 42b3b181fc8..2b603229ea2 100644
+index 8a57c83c102..cc2a892dff3 100644
 --- app/code/core/Mage/Cms/Helper/Data.php
 +++ app/code/core/Mage/Cms/Helper/Data.php
 @@ -37,6 +37,7 @@ class Mage_Cms_Helper_Data extends Mage_Core_Helper_Abstract
@@ -997,7 +997,7 @@ index 42b3b181fc8..2b603229ea2 100644
 +    }
  }
 diff --git app/code/core/Mage/Cms/Model/Wysiwyg/Config.php app/code/core/Mage/Cms/Model/Wysiwyg/Config.php
-index 471f10fa7da..33c16b6b17b 100644
+index b0f21b5e8bb..8b7b590bfc9 100644
 --- app/code/core/Mage/Cms/Model/Wysiwyg/Config.php
 +++ app/code/core/Mage/Cms/Model/Wysiwyg/Config.php
 @@ -93,7 +93,8 @@ class Mage_Cms_Model_Wysiwyg_Config extends Varien_Object
@@ -1011,7 +1011,7 @@ index 471f10fa7da..33c16b6b17b 100644
  
          $config->setData('directives_url_quoted', preg_quote($config->getData('directives_url')));
 diff --git app/code/core/Mage/Cms/etc/config.xml app/code/core/Mage/Cms/etc/config.xml
-index a75a7fb1a5a..7458f93ea0d 100644
+index 6726e69e8fe..1c67a4a3eac 100644
 --- app/code/core/Mage/Cms/etc/config.xml
 +++ app/code/core/Mage/Cms/etc/config.xml
 @@ -122,7 +122,7 @@
@@ -1024,7 +1024,7 @@ index a75a7fb1a5a..7458f93ea0d 100644
                          <mov>1</mov>
                          <rm>1</rm>
 diff --git app/code/core/Mage/Compiler/Model/Process.php app/code/core/Mage/Compiler/Model/Process.php
-index 1f7994e93ce..73fd07e6260 100644
+index 0db5c4d2de6..d1384f0503a 100644
 --- app/code/core/Mage/Compiler/Model/Process.php
 +++ app/code/core/Mage/Compiler/Model/Process.php
 @@ -43,6 +43,9 @@ class Mage_Compiler_Model_Process
@@ -1060,7 +1060,7 @@ index 1f7994e93ce..73fd07e6260 100644
              foreach ($implements as $class) {
                  if (!in_array($class, $sortedClasses) && !in_array($class, $this->_processedClasses) && strstr($class, '_')) {
 diff --git app/code/core/Mage/Core/Helper/Abstract.php app/code/core/Mage/Core/Helper/Abstract.php
-index ea847e3c8bd..b122553f274 100644
+index 64204a07f49..b4eaa322cbc 100644
 --- app/code/core/Mage/Core/Helper/Abstract.php
 +++ app/code/core/Mage/Core/Helper/Abstract.php
 @@ -443,4 +443,42 @@ abstract class Mage_Core_Helper_Abstract
@@ -1107,7 +1107,7 @@ index ea847e3c8bd..b122553f274 100644
 +    }
  }
 diff --git app/code/core/Mage/Core/Helper/Data.php app/code/core/Mage/Core/Helper/Data.php
-index e2e41b41ef4..f4deb30f613 100644
+index 263d3689acd..7fdc4f14d63 100644
 --- app/code/core/Mage/Core/Helper/Data.php
 +++ app/code/core/Mage/Core/Helper/Data.php
 @@ -254,7 +254,7 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
@@ -1120,7 +1120,7 @@ index e2e41b41ef4..f4deb30f613 100644
          return $str;
      }
 diff --git app/code/core/Mage/Core/Model/Design/Package.php app/code/core/Mage/Core/Model/Design/Package.php
-index d0587e82757..407524a4ec8 100644
+index ee8a3539b8a..bd51c3b102e 100644
 --- app/code/core/Mage/Core/Model/Design/Package.php
 +++ app/code/core/Mage/Core/Model/Design/Package.php
 @@ -589,7 +589,11 @@ class Mage_Core_Model_Design_Package
@@ -1137,7 +1137,7 @@ index d0587e82757..407524a4ec8 100644
          if (empty($regexps)) {
              return false;
 diff --git app/code/core/Mage/Core/Model/Email/Template/Filter.php app/code/core/Mage/Core/Model/Email/Template/Filter.php
-index 2d64307177a..2dd2b2f53d3 100644
+index 364ea40af0b..fd95678b79b 100644
 --- app/code/core/Mage/Core/Model/Email/Template/Filter.php
 +++ app/code/core/Mage/Core/Model/Email/Template/Filter.php
 @@ -564,4 +564,24 @@ class Mage_Core_Model_Email_Template_Filter extends Varien_Filter_Template
@@ -1166,7 +1166,7 @@ index 2d64307177a..2dd2b2f53d3 100644
 +    }
  }
 diff --git app/code/core/Mage/Core/Model/File/Validator/AvailablePath.php app/code/core/Mage/Core/Model/File/Validator/AvailablePath.php
-index ca5a6646a06..0a6ed4fc2a8 100644
+index 557215bb571..2256dadb1af 100644
 --- app/code/core/Mage/Core/Model/File/Validator/AvailablePath.php
 +++ app/code/core/Mage/Core/Model/File/Validator/AvailablePath.php
 @@ -230,8 +230,16 @@ class Mage_Core_Model_File_Validator_AvailablePath extends Zend_Validate_Abstrac
@@ -1187,7 +1187,7 @@ index ca5a6646a06..0a6ed4fc2a8 100644
              $valuePathInfo['dirname'] = '';
          }
 diff --git app/code/core/Mage/Core/Model/Observer.php app/code/core/Mage/Core/Model/Observer.php
-index 0d570bec400..ff562d83521 100644
+index 087cfe9982c..969051a99f2 100644
 --- app/code/core/Mage/Core/Model/Observer.php
 +++ app/code/core/Mage/Core/Model/Observer.php
 @@ -125,4 +125,19 @@ class Mage_Core_Model_Observer
@@ -1211,7 +1211,7 @@ index 0d570bec400..ff562d83521 100644
 +    }
  }
 diff --git app/code/core/Mage/Core/etc/config.xml app/code/core/Mage/Core/etc/config.xml
-index d0b5293d214..7abca9384ad 100644
+index 27afdf92b27..697483ce36e 100644
 --- app/code/core/Mage/Core/etc/config.xml
 +++ app/code/core/Mage/Core/etc/config.xml
 @@ -178,6 +178,22 @@
@@ -1238,10 +1238,10 @@ index d0b5293d214..7abca9384ad 100644
      </global>
      <frontend>
 diff --git app/code/core/Mage/Core/functions.php app/code/core/Mage/Core/functions.php
-index 3def24ef00c..fc6e837b100 100644
+index 52f6cda9183..16489c7f83c 100644
 --- app/code/core/Mage/Core/functions.php
 +++ app/code/core/Mage/Core/functions.php
-@@ -397,3 +397,19 @@ if (!function_exists('hash_equals')) {
+@@ -410,3 +410,19 @@ if (!function_exists('hash_equals')) {
          return 0 === $result;
      }
  }
@@ -1262,7 +1262,7 @@ index 3def24ef00c..fc6e837b100 100644
 +    }
 +}
 diff --git app/code/core/Mage/CurrencySymbol/Model/System/Currencysymbol.php app/code/core/Mage/CurrencySymbol/Model/System/Currencysymbol.php
-index d92bae1ff28..31a27836156 100644
+index 1ef4ddd0c87..a4928b6dfdc 100644
 --- app/code/core/Mage/CurrencySymbol/Model/System/Currencysymbol.php
 +++ app/code/core/Mage/CurrencySymbol/Model/System/Currencysymbol.php
 @@ -274,7 +274,11 @@ class Mage_CurrencySymbol_Model_System_Currencysymbol
@@ -1279,7 +1279,7 @@ index d92bae1ff28..31a27836156 100644
  
          return is_array($result) ? $result : array();
 diff --git app/code/core/Mage/Downloadable/controllers/DownloadController.php app/code/core/Mage/Downloadable/controllers/DownloadController.php
-index 180e0133ce3..07e7fe38460 100644
+index ff09b6d6228..a6ddb71e931 100644
 --- app/code/core/Mage/Downloadable/controllers/DownloadController.php
 +++ app/code/core/Mage/Downloadable/controllers/DownloadController.php
 @@ -97,7 +97,12 @@ class Mage_Downloadable_DownloadController extends Mage_Core_Controller_Front_Ac
@@ -1311,7 +1311,7 @@ index 180e0133ce3..07e7fe38460 100644
              $resourceType = '';
              if ($link->getSampleType() == Mage_Downloadable_Helper_Download::LINK_TYPE_URL) {
 diff --git app/code/core/Mage/SalesRule/Model/Coupon/Massgenerator.php app/code/core/Mage/SalesRule/Model/Coupon/Massgenerator.php
-index a9683a00e00..9df1732029f 100644
+index bd708e04f23..6edce6a21a1 100644
 --- app/code/core/Mage/SalesRule/Model/Coupon/Massgenerator.php
 +++ app/code/core/Mage/SalesRule/Model/Coupon/Massgenerator.php
 @@ -79,7 +79,7 @@ class Mage_SalesRule_Model_Coupon_Massgenerator extends Mage_Core_Model_Abstract
@@ -1324,7 +1324,7 @@ index a9683a00e00..9df1732029f 100644
                  $char = $splitChar . $char;
              }
 diff --git app/code/core/Mage/SalesRule/Model/Resource/Report/Rule/Createdat.php app/code/core/Mage/SalesRule/Model/Resource/Report/Rule/Createdat.php
-index bfda23b84ef..f574602d6d1 100644
+index 20f3dbad3f7..c24c8fcbf18 100644
 --- app/code/core/Mage/SalesRule/Model/Resource/Report/Rule/Createdat.php
 +++ app/code/core/Mage/SalesRule/Model/Resource/Report/Rule/Createdat.php
 @@ -118,14 +118,14 @@ class Mage_SalesRule_Model_Resource_Report_Rule_Createdat extends Mage_Reports_M
@@ -1345,7 +1345,7 @@ index bfda23b84ef..f574602d6d1 100644
                          ') * base_to_global_rate)', 0),
              );
 diff --git app/code/core/Mage/Sendfriend/etc/config.xml app/code/core/Mage/Sendfriend/etc/config.xml
-index 5b21374f5bb..3ef8964d825 100644
+index 90d9f078790..0f1fd829302 100644
 --- app/code/core/Mage/Sendfriend/etc/config.xml
 +++ app/code/core/Mage/Sendfriend/etc/config.xml
 @@ -122,7 +122,7 @@
@@ -1358,7 +1358,7 @@ index 5b21374f5bb..3ef8964d825 100644
                  <allow_guest>0</allow_guest>
                  <max_recipients>5</max_recipients>
 diff --git app/code/core/Mage/Sendfriend/etc/system.xml app/code/core/Mage/Sendfriend/etc/system.xml
-index 6f43d9ccdd6..2beaf38c20b 100644
+index d012ee017f7..3b2ffea0800 100644
 --- app/code/core/Mage/Sendfriend/etc/system.xml
 +++ app/code/core/Mage/Sendfriend/etc/system.xml
 @@ -52,6 +52,7 @@
@@ -1370,7 +1370,7 @@ index 6f43d9ccdd6..2beaf38c20b 100644
                          <template translate="label">
                              <label>Select Email Template</label>
 diff --git app/design/adminhtml/default/default/template/catalog/product/composite/fieldset/configurable.phtml app/design/adminhtml/default/default/template/catalog/product/composite/fieldset/configurable.phtml
-index 5452fe7d973..9d08a10dcc4 100644
+index e90183f61e7..2c0192c270f 100644
 --- app/design/adminhtml/default/default/template/catalog/product/composite/fieldset/configurable.phtml
 +++ app/design/adminhtml/default/default/template/catalog/product/composite/fieldset/configurable.phtml
 @@ -35,7 +35,7 @@
@@ -1383,7 +1383,7 @@ index 5452fe7d973..9d08a10dcc4 100644
                  <div class="input-box">
                      <select name="super_attribute[<?php echo $_attribute->getAttributeId() ?>]" id="attribute<?php echo $_attribute->getAttributeId() ?>" class="required-entry super-attribute-select">
 diff --git app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml
-index cc6221076f8..5d31b62c82b 100644
+index 3867500906c..e16bd3692f7 100644
 --- app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml
 +++ app/design/adminhtml/default/default/template/catalog/product/helper/gallery.phtml
 @@ -59,7 +59,7 @@ $_block = $this;
@@ -1396,7 +1396,7 @@ index cc6221076f8..5d31b62c82b 100644
              <th><?php echo Mage::helper('catalog')->__('Exclude') ?></th>
              <th class="last"><?php echo Mage::helper('catalog')->__('Remove') ?></th>
 diff --git app/design/adminhtml/default/default/template/catalog/product/tab/inventory.phtml app/design/adminhtml/default/default/template/catalog/product/tab/inventory.phtml
-index a0fd72dfdd4..e05ecf3d093 100644
+index dd49d5c98ce..3807a00c277 100644
 --- app/design/adminhtml/default/default/template/catalog/product/tab/inventory.phtml
 +++ app/design/adminhtml/default/default/template/catalog/product/tab/inventory.phtml
 @@ -77,7 +77,7 @@
@@ -1409,7 +1409,7 @@ index a0fd72dfdd4..e05ecf3d093 100644
              <?php $_checked = ($this->getFieldValue('use_config_min_sale_qty') || $this->IsNew()) ? 'checked="checked"' : '' ?>
              <input type="checkbox" id="inventory_use_config_min_sale_qty" name="<?php echo $this->getFieldSuffix() ?>[stock_data][use_config_min_sale_qty]" value="1" <?php echo $_checked ?> onclick="toggleValueElements(this, this.parentNode);" class="checkbox" <?php echo $_readonly;?> />
 diff --git app/design/adminhtml/default/default/template/currencysymbol/grid.phtml app/design/adminhtml/default/default/template/currencysymbol/grid.phtml
-index 597f6419f33..5a776238fe3 100644
+index 3e029d14d51..74359386a36 100644
 --- app/design/adminhtml/default/default/template/currencysymbol/grid.phtml
 +++ app/design/adminhtml/default/default/template/currencysymbol/grid.phtml
 @@ -66,12 +66,12 @@
@@ -1430,7 +1430,7 @@ index 597f6419f33..5a776238fe3 100644
                              </tr>
                              <?php endforeach; ?>
 diff --git app/design/adminhtml/default/default/template/customer/tab/addresses.phtml app/design/adminhtml/default/default/template/customer/tab/addresses.phtml
-index 4e41e32b3d7..c5f793c464a 100644
+index 6f479f11e96..23bd227c1a2 100644
 --- app/design/adminhtml/default/default/template/customer/tab/addresses.phtml
 +++ app/design/adminhtml/default/default/template/customer/tab/addresses.phtml
 @@ -46,7 +46,7 @@
@@ -1443,7 +1443,7 @@ index 4e41e32b3d7..c5f793c464a 100644
              <div class="address-type">
                  <span class="address-type-line">
 diff --git app/design/adminhtml/default/default/template/customer/tab/view.phtml app/design/adminhtml/default/default/template/customer/tab/view.phtml
-index cd23a75761c..ea0dd19a824 100644
+index 5a75882619f..2e761166692 100644
 --- app/design/adminhtml/default/default/template/customer/tab/view.phtml
 +++ app/design/adminhtml/default/default/template/customer/tab/view.phtml
 @@ -75,7 +75,7 @@ $createDateStore    = $this->getStoreCreateDate();
@@ -1456,7 +1456,7 @@ index cd23a75761c..ea0dd19a824 100644
      </fieldset>
  </div>
 diff --git app/design/adminhtml/default/default/template/notification/window.phtml app/design/adminhtml/default/default/template/notification/window.phtml
-index 1590005a298..1397492f539 100644
+index 34ebb0e6c64..bcbf78c1982 100644
 --- app/design/adminhtml/default/default/template/notification/window.phtml
 +++ app/design/adminhtml/default/default/template/notification/window.phtml
 @@ -68,7 +68,7 @@
@@ -1469,7 +1469,7 @@ index 1590005a298..1397492f539 100644
          </div>
          <p class="read-more"><a href="<?php echo $this->getNoticeMessageUrl(); ?>" onclick="this.target='_blank';"><?php echo $this->getReadDetailsText(); ?></a></p>
 diff --git app/design/adminhtml/default/default/template/sales/order/create/data.phtml app/design/adminhtml/default/default/template/sales/order/create/data.phtml
-index 82f8a66210e..d648baeef9b 100644
+index 41af760be63..992d3e06eb1 100644
 --- app/design/adminhtml/default/default/template/sales/order/create/data.phtml
 +++ app/design/adminhtml/default/default/template/sales/order/create/data.phtml
 @@ -33,7 +33,9 @@
@@ -1484,7 +1484,7 @@ index 82f8a66210e..d648baeef9b 100644
  <tr>
      <?php if($this->getCustomerId()): ?>
 diff --git app/design/adminhtml/default/default/template/sales/order/view/info.phtml app/design/adminhtml/default/default/template/sales/order/view/info.phtml
-index dcf7d6ad2fd..4bdeabc7953 100644
+index 9e37cd7b541..9fc16f5e7f6 100644
 --- app/design/adminhtml/default/default/template/sales/order/view/info.phtml
 +++ app/design/adminhtml/default/default/template/sales/order/view/info.phtml
 @@ -39,9 +39,9 @@ $orderStoreDate = $this->formatDate($_order->getCreatedAtStoreDate(), 'medium',
@@ -1536,7 +1536,7 @@ index dcf7d6ad2fd..4bdeabc7953 100644
      </div>
  </div>
 diff --git app/design/adminhtml/default/default/template/system/currency/rate/matrix.phtml app/design/adminhtml/default/default/template/system/currency/rate/matrix.phtml
-index 744e6ab2f0c..3e72f5597ac 100644
+index eb8ca2c4cf3..51dc57a377c 100644
 --- app/design/adminhtml/default/default/template/system/currency/rate/matrix.phtml
 +++ app/design/adminhtml/default/default/template/system/currency/rate/matrix.phtml
 @@ -38,7 +38,7 @@ $_rates = ( $_newRates ) ? $_newRates : $_oldRates;
@@ -1569,10 +1569,10 @@ index 744e6ab2f0c..3e72f5597ac 100644
                              <br /><span class="old-rate"><?php echo $this->__('Old rate:') ?> <?php echo $_oldRates[$_currencyCode][$_rate] ?></span>
                              <?php endif; ?>
 diff --git app/locale/en_US/Mage_Adminhtml.csv app/locale/en_US/Mage_Adminhtml.csv
-index 08b087b7e17..fb5f3a98fd3 100644
+index 6cc71368303..42c376fe442 100644
 --- app/locale/en_US/Mage_Adminhtml.csv
 +++ app/locale/en_US/Mage_Adminhtml.csv
-@@ -41,7 +41,7 @@
+@@ -43,7 +43,7 @@
  "<h1 class=""page-heading"">404 Error</h1><p>Page not found.</p>","<h1 class=""page-heading"">404 Error</h1><p>Page not found.</p>"
  "<strong>%s</strong> requests access to your account","<strong>%s</strong> requests access to your account"
  "<strong>Attention</strong>: Captcha is case sensitive.","<strong>Attention</strong>: Captcha is case sensitive."
@@ -1581,7 +1581,7 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "API Key","API Key"
  "API Key Confirmation","API Key Confirmation"
  "ASCII","ASCII"
-@@ -271,6 +271,7 @@
+@@ -269,6 +269,7 @@
  "Credit memo\'s total must be positive.","Credit memo\'s total must be positive."
  "Currency","Currency"
  "Currency ""%s"" is used as %s in %s.","Currency ""%s"" is used as %s in %s."
@@ -1589,7 +1589,7 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "Currency Information","Currency Information"
  "Currency Setup Section","Currency Setup Section"
  "Current Admin Password","Current Admin Password"
-@@ -936,6 +937,7 @@
+@@ -931,6 +932,7 @@
  "Self-assigned roles cannot be deleted.","Self-assigned roles cannot be deleted."
  "Sender","Sender"
  "Separate Email","Separate Email"
@@ -1597,7 +1597,7 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "Shipment #%s comment added","Shipment #%s comment added"
  "Shipment #%s created","Shipment #%s created"
  "Shipment Comments","Shipment Comments"
-@@ -1055,6 +1057,7 @@
+@@ -1048,6 +1050,7 @@
  "The email address is empty.","The email address is empty."
  "The email template has been deleted.","The email template has been deleted."
  "The email template has been saved.","The email template has been saved."
@@ -1606,10 +1606,10 @@ index 08b087b7e17..fb5f3a98fd3 100644
  "The group node name must be specified with field node name.","The group node name must be specified with field node name."
  "The image cache was cleaned.","The image cache was cleaned."
 diff --git app/locale/en_US/Mage_Core.csv app/locale/en_US/Mage_Core.csv
-index 607dc457eba..ee35105fdfa 100644
+index 4484f5fcfdb..7de32784f1c 100644
 --- app/locale/en_US/Mage_Core.csv
 +++ app/locale/en_US/Mage_Core.csv
-@@ -58,6 +58,7 @@
+@@ -57,6 +57,7 @@
  "Can\'t retrieve entity config: %s","Can\'t retrieve entity config: %s"
  "Cancel","Cancel"
  "Cannot complete this operation from non-admin area.","Cannot complete this operation from non-admin area."
@@ -1639,10 +1639,10 @@ index 8ae5a947caf..df201861844 100644
  "Yearly","Yearly"
 +"Please enter a sitemap name with at most %s characters.","Please enter a sitemap name with at most %s characters."
 diff --git js/mage/adminhtml/wysiwyg/tiny_mce/setup.js js/mage/adminhtml/wysiwyg/tiny_mce/setup.js
-index 88c6f7d9821..8fb09cf4620 100644
+index ce9a14d8aa5..3c5819fcd31 100644
 --- js/mage/adminhtml/wysiwyg/tiny_mce/setup.js
 +++ js/mage/adminhtml/wysiwyg/tiny_mce/setup.js
-@@ -365,6 +365,7 @@ tinyMceWysiwygSetup.prototype =
+@@ -110,6 +110,7 @@ tinyMceWysiwygSetup.prototype =
              theme_advanced_resizing : true,
              convert_urls : false,
              relative_urls : false,
@@ -1664,10 +1664,10 @@ index 89cea2a4107..b3f7e991815 100644
  			html += option("shockwave", "object");
  			html += option("windowsmedia", "object");
 diff --git js/varien/js.js js/varien/js.js
-index 2e0b253bd42..064029f18b2 100644
+index 5ea7404177d..702c0ed2d5e 100644
 --- js/varien/js.js
 +++ js/varien/js.js
-@@ -717,3 +717,40 @@ if ((typeof Range != "undefined") && !Range.prototype.createContextualFragment)
+@@ -707,3 +707,40 @@ if ((typeof Range != "undefined") && !Range.prototype.createContextualFragment)
          return frag;
      };
  }
@@ -1708,54 +1708,3 @@ index 2e0b253bd42..064029f18b2 100644
 +    Element.insert($$('body')[0], createdForm.form);
 +    createdForm.form.submit();
 +}
-diff --git lib/phpseclib/PHP/Compat/Function/array_fill.php lib/phpseclib/PHP/Compat/Function/array_fill.php
-index 79b5312aa2d..7eb231a0962 100644
---- lib/phpseclib/PHP/Compat/Function/array_fill.php
-+++ lib/phpseclib/PHP/Compat/Function/array_fill.php
-@@ -14,6 +14,7 @@
-  * @version     $Revision: 1.1 $
-  * @since       PHP 4.2.0
-  */
-+/*
- function php_compat_array_fill($start_index, $num, $value)
- {
-     if ($num <= 0) {
-@@ -39,3 +40,4 @@ if (!function_exists('array_fill')) {
-         return php_compat_array_fill($start_index, $num, $value);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/bcpowmod.php lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-index 4c162b87ef6..0366fef84d4 100644
---- lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-+++ lib/phpseclib/PHP/Compat/Function/bcpowmod.php
-@@ -15,6 +15,7 @@
-  * @since       PHP 5.0.0
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_bcpowmod($x, $y, $modulus, $scale = 0)
- {
-     // Sanity check
-@@ -64,3 +65,4 @@ if (!function_exists('bcpowmod')) {
-         return php_compat_bcpowmod($x, $y, $modulus, $scale);
-     }
- }
-+*/
-diff --git lib/phpseclib/PHP/Compat/Function/str_split.php lib/phpseclib/PHP/Compat/Function/str_split.php
-index 8f5179bc988..607e5ca32c4 100644
---- lib/phpseclib/PHP/Compat/Function/str_split.php
-+++ lib/phpseclib/PHP/Compat/Function/str_split.php
-@@ -12,6 +12,7 @@
-  * @since       PHP 5
-  * @require     PHP 4.0.0 (user_error)
-  */
-+/*
- function php_compat_str_split($string, $split_length = 1)
- {
-     if (!is_scalar($split_length)) {
-@@ -57,3 +58,4 @@ if (!function_exists('str_split')) {
-         return php_compat_str_split($string, $split_length);
-     }
- }
-+*/
